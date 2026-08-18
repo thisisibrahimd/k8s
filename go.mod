@@ -1,6 +1,6 @@
 module github.com/jsonnet-libs/k8s
 
-go 1.25.0
+go 1.26.6
 
 require (
 	github.com/creasty/defaults v1.8.0
@@ -9,9 +9,10 @@ require (
 	github.com/google/go-jsonnet v0.20.0
 	github.com/mdobak/go-xerrors v1.0.0
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3
+	github.com/sebdah/goldie/v2 v2.8.0
+	github.com/stoewer/go-strcase v1.3.1
 	github.com/stretchr/testify v1.11.1
 	github.com/urfave/cli/v3 v3.10.1
-	golang.org/x/text v0.40.0
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/apiextensions-apiserver v0.27.3
 	k8s.io/apimachinery v0.27.3
@@ -32,10 +33,12 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/stoewer/go-strcase v1.3.1 // indirect
+	github.com/rogpeppe/go-internal v1.16.0 // indirect
+	github.com/sergi/go-diff v1.4.0 // indirect
 	golang.org/x/crypto v0.54.0 // indirect
 	golang.org/x/net v0.57.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/text v0.40.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	k8s.io/klog/v2 v2.100.1 // indirect

@@ -3,24 +3,144 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"maps"
 	"net/url"
 	"os"
+	"path/filepath"
 
 	"github.com/google/go-jsonnet/formatter"
-	"github.com/jsonnet-libs/k8s/pkg/builder"
+	"github.com/jsonnet-libs/k8s/pkg/complier/jsonschemacomplier"
+	"github.com/jsonnet-libs/k8s/pkg/config"
+	"github.com/jsonnet-libs/k8s/pkg/model"
+	"github.com/jsonnet-libs/k8s/pkg/swagger"
+	"github.com/jsonnet-libs/k8s/pkg/targetgenerator"
+	"github.com/jsonnet-libs/k8s/pkg/util"
+	"github.com/jsonnet-libs/k8s/pkg/writer"
 	"github.com/mdobak/go-xerrors"
 	"github.com/santhosh-tekuri/jsonschema/v6"
-	"github.com/stoewer/go-strcase"
 	"github.com/urfave/cli/v3"
 )
 
 func newGenerateCommand() *cli.Command {
 	cmd := &cli.Command{
 		Name:  "generate",
-		Usage: "generate jsonnet libraries from crds, openapi, jsonschema, helmvalues",
+		Usage: "generate jsonnet libraries from crds, openapi, or jsonschema",
 	}
 
+	cmd.Commands = append(cmd.Commands, newK8sGenerateCommand())
 	cmd.Commands = append(cmd.Commands, newJsonSchemaGenerateCommand())
+	return cmd
+}
+
+func newK8sGenerateCommand() *cli.Command {
+	cmd := &cli.Command{
+		Name:        "k8s",
+		Usage:       "generate jsonnet libraries from crds or openapi specs.",
+		Description: "generate jsonnet libraries for Kubernetes from crds or openapi specs.",
+	}
+
+	cmd.Action = func(ctx context.Context, c *cli.Command) error {
+		// parse config
+		configFile := c.String("config")
+		absConfigFile, err := filepath.Abs(configFile)
+		if err != nil {
+			panic(err)
+		}
+		configDir := filepath.Dir(absConfigFile)
+		if err := os.Chdir(configDir); err != nil {
+			panic(err)
+		}
+
+		cfg, err := config.Load(absConfigFile)
+		if err != nil {
+			panic(err)
+		}
+		err = config.Validate(cfg)
+		if err != nil {
+			panic(err)
+		}
+		slog.Debug("loaded config file", slog.String("file", configFile))
+
+		// generate targets from specGenerator
+		if cfg.SpecGenerator != nil {
+			tg, err := targetgenerator.New(*cfg.SpecGenerator)
+			if err != nil {
+				return xerrors.New("failed to create target generator", err)
+			}
+
+			specs, err := tg.GenerateTargets()
+			if err != nil {
+				return xerrors.New("failed to generate targets", err)
+			}
+			cfg.Specs = specs
+		}
+
+		// inform user of filtering
+		args := c.Args().Slice()
+		if len(args) > 0 {
+			slog.Warn("filtering generation to listed versions", slog.Any("versions", args))
+		}
+
+		// generate all target in config
+		for _, t := range cfg.Specs {
+			if len(args) > 0 && !util.HasStr(args, t.Output) {
+				slog.Debug("skipping version", slog.String("version", t.Output))
+				continue
+			}
+
+			prefix := ""
+			if cfg.SpecGenerator != nil {
+				prefix = cfg.SpecGenerator.Prefix
+			}
+			if t.Prefix != "" {
+				prefix = t.Prefix
+			}
+
+			swaggerDefs := make(swagger.Definitions)
+			if len(t.Crds) > 0 {
+				for _, url := range t.Crds {
+					slog.Info(
+						"generating spec",
+						slog.String("version", t.Output),
+						slog.String("spec", url),
+						slog.String("prefix", prefix),
+					)
+
+					loadedDefs, err := swagger.Load(&swagger.CRDLoader{}, url)
+					if err != nil {
+						return xerrors.New("unable to load spec", err)
+					}
+					maps.Copy(swaggerDefs, loadedDefs)
+				}
+			} else {
+				slog.Info(
+					"generating spec",
+					slog.String("version", t.Output),
+					slog.String("spec", t.Openapi),
+					slog.String("prefix", prefix),
+				)
+
+				loadedDefs, err := swagger.Load(&swagger.SwaggerLoader{}, t.Openapi)
+				if err != nil {
+					return xerrors.New("unable to load spec", err)
+				}
+				swaggerDefs = loadedDefs
+			}
+
+			groups := model.Load(&swaggerDefs, prefix)
+			path := filepath.Join(cfg.OutputDir, t.Output)
+
+			// write libsonnet files to disk
+			diskWriter := writer.NewDiskWriter()
+			if err := diskWriter.Render(path, groups, t, cfg.LibName, cfg.Description); err != nil {
+				return xerrors.New("failed to write libsonnet files", err)
+			}
+		}
+
+		return nil
+	}
+
 	return cmd
 }
 
@@ -65,34 +185,37 @@ func newJsonSchemaGenerateCommand() *cli.Command {
 		Usage: "libsonnet file",
 	})
 
-	cmd.Flags = append(cmd.Flags, &cli.StringFlag{
-		Name:     "library-name",
-		Usage:    "library name",
-		Required: true,
-	})
-
 	cmd.Action = func(ctx context.Context, c *cli.Command) error {
 		jsonschemaFile := c.String("schema")
+		slog.Debug("generating libsonnet library from jsonschema", slog.String("schema", jsonschemaFile))
 
-		// jsonschema reader
+		// create jsonschema compiler
 		comp := jsonschema.NewCompiler()
 
-		// setup loader
-		comp.UseLoader(jsonschema.FileLoader{})
+		// setup loader for local file and remote urls
+		l, _ := jsonschemacomplier.NewLoader(false, "")
+		comp.UseLoader(l)
+		slog.Debug("configured loader based on schema")
 
+		// load jsonschema
 		sch, err := comp.Compile(jsonschemaFile)
 		if err != nil {
-			return err
+			return xerrors.New("error compiling schema", err)
 		}
+		slog.Debug("complied schema", slog.Int("version", sch.DraftVersion))
 
-		libsonnetFile := genLibsonnet(sch, c.String("library-name"), []string{})
+		// compile jsonschema into libsonnet
+		libsonnetFile := jsonschemacomplier.CompileLibsonnet(sch, "schema", []string{})
+		slog.Debug("generated libsonnet files")
 
 		// format libsonnet file
-		formattedLibsonnetFile, err := formatter.Format("", libsonnetFile.(builder.ObjectType).String(), formatter.DefaultOptions())
+		formattedLibsonnetFile, err := formatter.Format("", libsonnetFile.String(), formatter.DefaultOptions())
 		if err != nil {
 			return err
 		}
+		slog.Debug("formatted libsonnet file")
 
+		// output libsonnet either to stdout or file
 		if c.String("output") == "" {
 			fmt.Print(formattedLibsonnetFile)
 		} else {
@@ -107,65 +230,4 @@ func newJsonSchemaGenerateCommand() *cli.Command {
 	}
 
 	return cmd
-}
-
-func genAdditiveObjWrapper(in builder.Type, path []string) builder.Type {
-	if len(path) == 0 {
-		return in
-	}
-
-	return builder.Merge(builder.Object(path[0], genAdditiveObjWrapper(in, path[1:])))
-}
-
-func genLibsonnet(s *jsonschema.Schema, name string, curPath []string) builder.Type {
-	if s.Ref != nil {
-		s = s.Ref
-	}
-
-	propTypes := []builder.Type{}
-	for pName, p := range s.Properties {
-		newPath := make([]string, len(curPath))
-		copy(newPath, curPath)
-		newPath = append(newPath, pName)
-
-		if p.Ref != nil {
-			p = p.Ref
-		}
-
-		var pT string
-		if p.Types != nil {
-			pT = p.Types.ToStrings()[0]
-		} else {
-			if p.Enum != nil {
-				pT = "string"
-			} else if len(p.AnyOf) > 0 {
-				pT = "string"
-			}
-		}
-
-		switch pT {
-		// case "array":
-		// 	propType := builder.Object(strcase.LowerCamelCase(pName))
-		// 	propTypes = append(propTypes, propType)
-		case "object":
-			propType := genLibsonnet(p, strcase.LowerCamelCase(pName), newPath)
-			propTypes = append(propTypes, propType)
-		default:
-			funcName := fmt.Sprintf("with%s", strcase.UpperCamelCase(pName))
-			propType := builder.Func(
-				funcName,
-				builder.Args(
-					builder.Required(builder.SafeString(strcase.LowerCamelCase(pName), "")),
-				),
-				builder.Object(strcase.LowerCamelCase(pName),
-					genAdditiveObjWrapper(
-						builder.Ref(pName, builder.SafeIdentifier(strcase.LowerCamelCase(pName))),
-						curPath,
-					),
-				))
-			propTypes = append(propTypes, propType)
-		}
-	}
-
-	return builder.Object(name, propTypes...)
 }
