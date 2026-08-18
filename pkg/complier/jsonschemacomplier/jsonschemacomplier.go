@@ -23,6 +23,10 @@ func CompileLibsonnet(s *jsonschema.Schema, name string, curPath []string) build
 		s = s.Ref
 	}
 
+	if len(curPath) > 50 {
+		panic("Currently 50 levels deep into properties. There is most likely a acylic loop")
+	}
+
 	// loop through the properties in this current schema
 	// limitations: we do not support special properties
 	propTypes := []builder.Type{}
@@ -91,6 +95,7 @@ func CompileLibsonnet(s *jsonschema.Schema, name string, curPath []string) build
 				),
 			)
 			propTypes = append(propTypes, propTypeMixin)
+
 		case "object":
 			propType := CompileLibsonnet(p, strcase.LowerCamelCase(pName), newPath)
 			propTypes = append(propTypes, propType)
