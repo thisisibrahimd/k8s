@@ -25,7 +25,7 @@ import (
 func newGenerateCommand() *cli.Command {
 	cmd := &cli.Command{
 		Name:  "generate",
-		Usage: "generate jsonnet libraries from crds, openapi, jsonschema, helmvalues",
+		Usage: "generate jsonnet libraries from crds, openapi, or jsonschema",
 	}
 
 	cmd.Commands = append(cmd.Commands, newK8sGenerateCommand())
@@ -35,8 +35,9 @@ func newGenerateCommand() *cli.Command {
 
 func newK8sGenerateCommand() *cli.Command {
 	cmd := &cli.Command{
-		Name:  "k8s",
-		Usage: "generate jsonnet libraries from crds or openapi specs.",
+		Name:        "k8s",
+		Usage:       "generate jsonnet libraries from crds or openapi specs.",
+		Description: "generate jsonnet libraries for Kubernetes from crds or openapi specs.",
 	}
 
 	cmd.Action = func(ctx context.Context, c *cli.Command) error {

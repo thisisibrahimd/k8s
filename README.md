@@ -3,8 +3,8 @@
 Code generator for Jsonnet Kubernetes libraries.
 
 This repository contains the generator code and relevant bits to generate the jsonnet
-libraries. It can generate libraries directly from OpenAPI spec v2 (Swagger) or by
-providing CustomResourceDefinitions.
+libraries. It can generate libraries directly from OpenAPI spec v2 (Swagger), from
+CustomResourceDefinitions, or from JSON Schema.
 
 ## Installation
 
@@ -61,7 +61,7 @@ Create a `config.json` with `specGenerator` to auto-discover CRDs from GitHub:
 Then run:
 
 ```bash
-k8s-gen --config libs/cloudnative-pg/config.json
+k8s-gen generate k8s --config libs/cloudnative-pg/config.json
 ```
 
 Note: Output defaults to the config file's directory. Set `outputDir` in config to change this (relative to config file).
@@ -98,14 +98,14 @@ The `versionPrefix` field (default `"v"`) is prepended to each version in `versi
 If you have the [GitHub CLI](https://cli.github.com/) installed, you can use it to get a token:
 
 ```bash
-GITHUB_TOKEN=$(gh auth token) k8s-gen --config libs/cloudnative-pg/config.json
+GITHUB_TOKEN=$(gh auth token) k8s-gen generate k8s --config libs/cloudnative-pg/config.json
 ```
 
 Or export it for the session:
 
 ```bash
 export GITHUB_TOKEN=$(gh auth token)
-k8s-gen --config libs/cloudnative-pg/config.json
+k8s-gen generate k8s --config libs/cloudnative-pg/config.json
 ```
 
 #### Approach 2: Manual Specs
@@ -184,7 +184,7 @@ $ make libs/<name>
 Or run the binary directly:
 
 ```bash
-$ k8s-gen --config libs/<name>/config.json
+$ k8s-gen generate k8s --config libs/<name>/config.json
 ```
 
 ### Generate Jsonnet from JSON Schema
@@ -214,7 +214,6 @@ Run the generator:
 ```bash
 $ k8s-gen generate jsonschema \
   --schema ./config.schema.json \
-  --library-name config \
   --output ./config.libsonnet
 ```
 
@@ -251,12 +250,12 @@ Nested objects produce nested functions and additive objects (`+:`), so you can 
 | Flag | Required | Description |
 |------|----------|-------------|
 | `--schema` | Yes | Path or URL to the JSON Schema file. |
-| `--library-name` | Yes | Name of the generated library. |
 | `--output` | No | Output file path. If omitted, prints to stdout. |
 
 #### Limitations
 
-- Array properties are not yet supported.
+- Array properties are supported with a basic setter (`withX`) and mixin (`withXMixin`). If the
+  argument is not an array, it is automatically wrapped in a list.
 - Schema composition with `anyOf`, `oneOf`, or external `$ref` is limited.
 - Empty object properties (`{}`) may appear when the schema declares an object but provides no properties.
 

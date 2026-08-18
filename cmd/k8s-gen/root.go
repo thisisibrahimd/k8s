@@ -13,8 +13,8 @@ func NewRootCommand() *cli.Command {
 	// command
 	cmd := &cli.Command{
 		Name:        "k8s-gen",
-		Usage:       "k8s-gen [versions] --config <config.json>",
-		Description: "k8s-gen generates the Jsonnet Kubernetes library from OpenAPI specs",
+		Usage:       "k8s-gen [global options] <command> [command options]",
+		Description: "k8s-gen generates Jsonnet libraries from OpenAPI specs, CRDs, or JSON Schema",
 	}
 
 	// flags
