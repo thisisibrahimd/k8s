@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/fatih/camelcase"
-	"github.com/jsonnet-libs/k8s/pkg/swagger"
+	"github.com/thisisibrahimd/k8s/pkg/swagger"
 )
 
 type excludeType string

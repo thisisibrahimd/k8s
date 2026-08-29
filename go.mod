@@ -1,4 +1,4 @@
-module github.com/jsonnet-libs/k8s
+module github.com/thisisibrahimd/k8s
 
 go 1.26.6
 

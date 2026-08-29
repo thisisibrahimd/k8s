@@ -11,8 +11,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/jsonnet-libs/k8s/pkg/config"
-	"github.com/jsonnet-libs/k8s/pkg/telemetry"
+	"github.com/thisisibrahimd/k8s/pkg/config"
+	"github.com/thisisibrahimd/k8s/pkg/telemetry"
 	"github.com/mdobak/go-xerrors"
 	"resty.dev/v3"
 )

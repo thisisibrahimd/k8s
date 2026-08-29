@@ -11,23 +11,25 @@ CustomResourceDefinitions, or from JSON Schema.
 ### Docker
 
 ```bash
-docker pull ghcr.io/jsonnet-libs/k8s:<version>
+docker pull ghcr.io/thisisibrahimd/k8s-gen:<version>
 ```
 
 ### Binary release
 
-Download pre-built binaries from [GitHub Releases](https://github.com/jsonnet-libs/k8s/releases):
+Download pre-built binaries from [GitHub Releases](https://github.com/thisisibrahimd/k8s/releases):
 
 ```bash
-curl -sL https://github.com/jsonnet-libs/k8s/releases/latest/download/k8s-gen_linux_x86_64.tar.gz | tar xz
+curl -sL https://github.com/thisisibrahimd/k8s/releases/latest/download/k8s-gen_linux_x86_64.tar.gz | tar xz
 sudo mv k8s-gen /usr/local/bin/
 ```
 
 ### From source
 
 ```bash
-go install github.com/jsonnet-libs/k8s@latest
+go install github.com/thisisibrahimd/k8s@latest
 ```
+
+Note: this installs the binary as `k8s` (module path name). Rename or symlink it to `k8s-gen`, or substitute `k8s` in the commands below.
 
 ## Usage
 
@@ -137,7 +139,7 @@ If you prefer to manually define versions and CRD URLs, omit `specGenerator` and
 }
 ```
 
-Note: When using manual specs, add a per-spec `prefix` if the CRD group cannot be inferred from the URLs alone.
+Note: When using manual specs, set a per-spec `prefix` (regex) to filter which API groups are included; without a prefix, all groups found in the specs are included. Each spec must set either `crds` (a list of CRDs) or `openapi` (a single OpenAPI v2/Swagger spec) — they are mutually exclusive, and both accept URLs or local file paths.
 
 | Feature | Auto-Discovery | Manual |
 |---------|---------------|--------|
@@ -147,6 +149,7 @@ Note: When using manual specs, add a per-spec `prefix` if the CRD group cannot b
 | `versionLimit` | Default `10` (mutually exclusive with `versions`) | Not applicable |
 | `versions` | Optional exact list of clean versions (without prefix) | Not applicable |
 | `versionPrefix` | Default `"v"` (prepended to `versions` for the Git ref) | Not applicable |
+| `includeVersions` | Default `^v?\d+\.\d+\.\d+$` (regex filter on discovered tag names) | Not applicable |
 | `dedupeCrds` | Default `true` (skips duplicate CRD versions; ignored when `versions` is set) | Not applicable |
 | Maintenance | Automatic on new releases | Manual updates required |
 
@@ -175,10 +178,22 @@ Create a `config.json` in the new folder. This example renders a lib from CRDs:
 }
 ```
 
+Build the binary first (the Makefile expects `./k8s-gen` in the repo root):
+
+```bash
+go build -o k8s-gen .
+```
+
 Generate the library:
 
 ```bash
 $ make libs/<name>
+```
+
+Pass `VERSIONS` to regenerate only specific versions:
+
+```bash
+$ make libs/<name> VERSIONS="1.27.0"
 ```
 
 Or run the binary directly:
@@ -186,6 +201,8 @@ Or run the binary directly:
 ```bash
 $ k8s-gen generate k8s --config libs/<name>/config.json
 ```
+
+Append version outputs as positional arguments to regenerate only specific versions, e.g. `k8s-gen generate k8s --config libs/<name>/config.json 1.27.0`. Use the global `--debug` flag for verbose logging.
 
 ### Generate Jsonnet from JSON Schema
 
@@ -270,7 +287,7 @@ For that, there are two methods for extending:
 
 ### `custom` patches
 
-The [`custom/`](https://github.com/jsonnet-libs/k8s/tree/master/libs/k8s/custom)
+The [`custom/`](https://github.com/thisisibrahimd/k8s/tree/master/libs/k8s/custom)
 directory contains a set of `.libsonnet` files, that are _automatically merged_
 with the generated result in `main.libsonnet`, so they become part of the
 exported API.
@@ -283,10 +300,10 @@ libs/k8s/
 ├── config.json                      # Config to generate the k8s jsonnet libraries
 └── custom
     └── core
-      	├── apps.libsonnet           # Constructors for `core/v1`, ported from `ksonnet-gen` and `kausal.libsonnet`
-        ├── autoscaling.libsonnet    # Extends `autoscaling/v2beta2`
-      	├── batch.libsonnet          # Constructors for `batch/v1beta1`, `batch/v2alpha1`, ported from `kausal.libsonnet`
-      	├── core.libsonnet           # Constructors for `apps/v1`, `apps/v1beta1`, ported from `ksonnet-gen` and `kausal.libsonnet`
+      	├── apps.libsonnet           # Constructors for `apps/v1` (daemonSet, deployment, statefulSet), ported from `ksonnet-gen` and `kausal.libsonnet`
+        ├── autoscaling.libsonnet    # Extends `autoscaling/v1` and `autoscaling/v2`
+      	├── batch.libsonnet          # Constructors for `batch/v1` (cronJob), ported from `kausal.libsonnet`
+      	├── core.libsonnet           # Constructors for `core/v1`, ported from `ksonnet-gen` and `kausal.libsonnet`
         ├── list.libsonnet           # Adds `core.v1.List`
       	├── mapContainers.libsonnet  # Adds `mapContainers` functions for fields that support them
       	├── rbac.libsonnet           # Adds helper functions to rbac objects
