@@ -28,7 +28,6 @@ type TargetGenerator struct {
 	Prefix          string   `json:"prefix" validate:"required"`
 	VersionLimit    *int     `json:"versionLimit" validate:"omitempty,min=1,excluded_with=Versions"`
 	IncludeVersions string   `json:"includeVersions" default:"^v?\\d+\\.\\d+\\.\\d+$"`
-	ExcludeVersions string   `json:"excludeVersions"`
 	DedupeCrds      *bool    `json:"dedupeCrds" default:"true"`
 	Versions        []string `json:"versions" validate:"excluded_with=VersionLimit"`
 	VersionPrefix   *string  `json:"versionPrefix" default:"v"`

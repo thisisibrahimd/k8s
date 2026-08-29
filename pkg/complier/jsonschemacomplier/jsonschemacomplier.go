@@ -3,8 +3,8 @@ package jsonschemacomplier
 import (
 	"fmt"
 
-	"github.com/jsonnet-libs/k8s/pkg/builder"
-	"github.com/jsonnet-libs/k8s/pkg/render"
+	"github.com/thisisibrahimd/k8s/pkg/builder"
+	"github.com/thisisibrahimd/k8s/pkg/render"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/stoewer/go-strcase"
 )

@@ -47,7 +47,7 @@ dockers_v2:
   - id: k8s-gen
     dockerfile: "Containerfile"
     images:
-      - "ghcr.io/{{ .Env.OWNER }}/k8s-gen"
+      - "ghcr.io/thisisibrahimd/k8s-gen"
     extra_files:
       - LICENSE
     labels:

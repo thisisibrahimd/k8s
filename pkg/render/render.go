@@ -4,9 +4,9 @@ import (
 	"path"
 	"path/filepath"
 
-	j "github.com/jsonnet-libs/k8s/pkg/builder"
-	d "github.com/jsonnet-libs/k8s/pkg/builder/docsonnet"
-	"github.com/jsonnet-libs/k8s/pkg/model"
+	j "github.com/thisisibrahimd/k8s/pkg/builder"
+	d "github.com/thisisibrahimd/k8s/pkg/builder/docsonnet"
+	"github.com/thisisibrahimd/k8s/pkg/model"
 )
 
 // Common set of directory structure / file extensions

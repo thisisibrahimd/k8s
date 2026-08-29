@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/google/go-jsonnet/formatter"
-	"github.com/jsonnet-libs/k8s/pkg/complier/jsonschemacomplier"
+	"github.com/thisisibrahimd/k8s/pkg/complier/jsonschemacomplier"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/sebdah/goldie/v2"
 )

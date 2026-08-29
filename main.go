@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"os"
 
-	cmd "github.com/jsonnet-libs/k8s/cmd/k8s-gen"
+	cmd "github.com/thisisibrahimd/k8s/cmd/k8s-gen"
 )
 
 func main() {

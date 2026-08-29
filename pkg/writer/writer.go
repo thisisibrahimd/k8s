@@ -1,8 +1,8 @@
 package writer
 
 import (
-	"github.com/jsonnet-libs/k8s/pkg/config"
-	"github.com/jsonnet-libs/k8s/pkg/model"
+	"github.com/thisisibrahimd/k8s/pkg/config"
+	"github.com/thisisibrahimd/k8s/pkg/model"
 )
 
 type Writer interface {

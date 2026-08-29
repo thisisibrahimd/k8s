@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/jsonnet-libs/k8s/pkg/telemetry"
+	"github.com/thisisibrahimd/k8s/pkg/telemetry"
 	"github.com/urfave/cli/v3"
 )
 
