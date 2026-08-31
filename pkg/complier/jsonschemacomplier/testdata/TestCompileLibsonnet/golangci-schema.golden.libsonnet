@@ -1,6 +1,11 @@
 {
   formatters: {
     exclusions: {
+      mapPaths(f): { formatters+: {
+        exclusions+: {
+          paths: std.map(f, super.paths),
+        },
+      } },
       withGenerated(generated): {
         formatters+: {
           exclusions+: {
@@ -30,8 +35,18 @@
         },
       },
     },
+    mapEnable(f): { formatters+: {
+      enable: std.map(f, super.enable),
+    } },
     settings: {
       gci: {
+        mapSections(f): { formatters+: {
+          settings+: {
+            gci+: {
+              sections: std.map(f, super.sections),
+            },
+          },
+        } },
         withCustomOrder(customOrder): {
           formatters+: {
             settings+: {
@@ -88,6 +103,13 @@
         },
       },
       gofmt: {
+        mapRewriteRules(f): { formatters+: {
+          settings+: {
+            gofmt+: {
+              'rewrite-rules': std.map(f, super['rewrite-rules']),
+            },
+          },
+        } },
         rewriteRules: {
           withPattern(pattern): {
             formatters+: {
@@ -161,6 +183,13 @@
         },
       },
       goimports: {
+        mapLocalPrefixes(f): { formatters+: {
+          settings+: {
+            goimports+: {
+              'local-prefixes': std.map(f, super['local-prefixes']),
+            },
+          },
+        } },
         withLocalPrefixes(localPrefixes): {
           formatters+: {
             settings+: {
@@ -288,7 +317,34 @@
   },
   linters: {
     exclusions: {
+      mapPaths(f): { linters+: {
+        exclusions+: {
+          paths: std.map(f, super.paths),
+        },
+      } },
+      mapPathsExcept(f): { linters+: {
+        exclusions+: {
+          'paths-except': std.map(f, super['paths-except']),
+        },
+      } },
+      mapPresets(f): { linters+: {
+        exclusions+: {
+          presets: std.map(f, super.presets),
+        },
+      } },
+      mapRules(f): { linters+: {
+        exclusions+: {
+          rules: std.map(f, super.rules),
+        },
+      } },
       rules: {
+        mapLinters(f): { linters+: {
+          exclusions+: {
+            rules+: {
+              linters: std.map(f, super.linters),
+            },
+          },
+        } },
         withLinters(linters): {
           linters+: {
             exclusions+: {
@@ -415,8 +471,21 @@
         },
       },
     },
+    mapDisable(f): { linters+: {
+      disable: std.map(f, super.disable),
+    } },
+    mapEnable(f): { linters+: {
+      enable: std.map(f, super.enable),
+    } },
     settings: {
       asasalint: {
+        mapExclude(f): { linters+: {
+          settings+: {
+            asasalint+: {
+              exclude: std.map(f, super.exclude),
+            },
+          },
+        } },
         withExclude(exclude): {
           linters+: {
             settings+: {
@@ -572,6 +641,13 @@
         },
       },
       decorder: {
+        mapDecOrder(f): { linters+: {
+          settings+: {
+            decorder+: {
+              'dec-order': std.map(f, super['dec-order']),
+            },
+          },
+        } },
         withDecOrder(decOrder): {
           linters+: {
             settings+: {
@@ -680,6 +756,20 @@
         },
       },
       dupword: {
+        mapIgnore(f): { linters+: {
+          settings+: {
+            dupword+: {
+              ignore: std.map(f, super.ignore),
+            },
+          },
+        } },
+        mapKeywords(f): { linters+: {
+          settings+: {
+            dupword+: {
+              keywords: std.map(f, super.keywords),
+            },
+          },
+        } },
         withCommentsOnly(commentsOnly): {
           linters+: {
             settings+: {
@@ -747,6 +837,13 @@
         },
       },
       errcheck: {
+        mapExcludeFunctions(f): { linters+: {
+          settings+: {
+            errcheck+: {
+              'exclude-functions': std.map(f, super['exclude-functions']),
+            },
+          },
+        } },
         withCheckBlank(checkBlank): {
           linters+: {
             settings+: {
@@ -871,6 +968,20 @@
             },
           },
         },
+        mapAllowedErrors(f): { linters+: {
+          settings+: {
+            errorlint+: {
+              'allowed-errors': std.map(f, super['allowed-errors']),
+            },
+          },
+        } },
+        mapAllowedErrorsWildcard(f): { linters+: {
+          settings+: {
+            errorlint+: {
+              'allowed-errors-wildcard': std.map(f, super['allowed-errors-wildcard']),
+            },
+          },
+        } },
         withAllowedErrors(allowedErrors): {
           linters+: {
             settings+: {
@@ -945,6 +1056,13 @@
         },
       },
       exhaustive: {
+        mapCheck(f): { linters+: {
+          settings+: {
+            exhaustive+: {
+              check: std.map(f, super.check),
+            },
+          },
+        } },
         withCheck(check): {
           linters+: {
             settings+: {
@@ -1028,6 +1146,27 @@
         },
       },
       exhaustruct: {
+        mapAllowEmptyRx(f): { linters+: {
+          settings+: {
+            exhaustruct+: {
+              'allow-empty-rx': std.map(f, super['allow-empty-rx']),
+            },
+          },
+        } },
+        mapExclude(f): { linters+: {
+          settings+: {
+            exhaustruct+: {
+              exclude: std.map(f, super.exclude),
+            },
+          },
+        } },
+        mapInclude(f): { linters+: {
+          settings+: {
+            exhaustruct+: {
+              include: std.map(f, super.include),
+            },
+          },
+        } },
         withAllowEmpty(allowEmpty): {
           linters+: {
             settings+: {
@@ -1157,6 +1296,13 @@
             },
           },
         },
+        mapForbid(f): { linters+: {
+          settings+: {
+            forbidigo+: {
+              forbid: std.map(f, super.forbid),
+            },
+          },
+        } },
         withAnalyzeTypes(analyzeTypes): {
           linters+: {
             settings+: {
@@ -1421,6 +1567,20 @@
         },
       },
       goconst: {
+        mapIgnoreFunctions(f): { linters+: {
+          settings+: {
+            goconst+: {
+              'ignore-functions': std.map(f, super['ignore-functions']),
+            },
+          },
+        } },
+        mapIgnoreStringValues(f): { linters+: {
+          settings+: {
+            goconst+: {
+              'ignore-string-values': std.map(f, super['ignore-string-values']),
+            },
+          },
+        } },
         withEvalConstExpressions(evalConstExpressions): {
           linters+: {
             settings+: {
@@ -1549,6 +1709,34 @@
         },
       },
       gocritic: {
+        mapDisabledChecks(f): { linters+: {
+          settings+: {
+            gocritic+: {
+              'disabled-checks': std.map(f, super['disabled-checks']),
+            },
+          },
+        } },
+        mapDisabledTags(f): { linters+: {
+          settings+: {
+            gocritic+: {
+              'disabled-tags': std.map(f, super['disabled-tags']),
+            },
+          },
+        } },
+        mapEnabledChecks(f): { linters+: {
+          settings+: {
+            gocritic+: {
+              'enabled-checks': std.map(f, super['enabled-checks']),
+            },
+          },
+        } },
+        mapEnabledTags(f): { linters+: {
+          settings+: {
+            gocritic+: {
+              'enabled-tags': std.map(f, super['enabled-tags']),
+            },
+          },
+        } },
         settings: {
           captLocal: {
             withParamsOnly(paramsOnly): {
@@ -1927,6 +2115,20 @@
         },
       },
       godoclint: {
+        mapDisable(f): { linters+: {
+          settings+: {
+            godoclint+: {
+              disable: std.map(f, super.disable),
+            },
+          },
+        } },
+        mapEnable(f): { linters+: {
+          settings+: {
+            godoclint+: {
+              enable: std.map(f, super.enable),
+            },
+          },
+        } },
         options: {
           maxLen: {
             withLength(length): {
@@ -2034,6 +2236,13 @@
         },
       },
       godot: {
+        mapExclude(f): { linters+: {
+          settings+: {
+            godot+: {
+              exclude: std.map(f, super.exclude),
+            },
+          },
+        } },
         withCapital(capital): {
           linters+: {
             settings+: {
@@ -2090,6 +2299,13 @@
         },
       },
       godox: {
+        mapKeywords(f): { linters+: {
+          settings+: {
+            godox+: {
+              keywords: std.map(f, super.keywords),
+            },
+          },
+        } },
         withKeywords(keywords): {
           linters+: {
             settings+: {
@@ -2134,6 +2350,13 @@
         },
       },
       gomoddirectives: {
+        mapReplaceAllowList(f): { linters+: {
+          settings+: {
+            gomoddirectives+: {
+              'replace-allow-list': std.map(f, super['replace-allow-list']),
+            },
+          },
+        } },
         withCheckModulePath(checkModulePath): {
           linters+: {
             settings+: {
@@ -2245,6 +2468,24 @@
       },
       gomodguard: {
         allowed: {
+          mapDomains(f): { linters+: {
+            settings+: {
+              gomodguard+: {
+                allowed+: {
+                  domains: std.map(f, super.domains),
+                },
+              },
+            },
+          } },
+          mapModules(f): { linters+: {
+            settings+: {
+              gomodguard+: {
+                allowed+: {
+                  modules: std.map(f, super.modules),
+                },
+              },
+            },
+          } },
           withDomains(domains): {
             linters+: {
               settings+: {
@@ -2291,6 +2532,24 @@
           },
         },
         blocked: {
+          mapModules(f): { linters+: {
+            settings+: {
+              gomodguard+: {
+                blocked+: {
+                  modules: std.map(f, super.modules),
+                },
+              },
+            },
+          } },
+          mapVersions(f): { linters+: {
+            settings+: {
+              gomodguard+: {
+                blocked+: {
+                  versions: std.map(f, super.versions),
+                },
+              },
+            },
+          } },
           withLocalReplaceDirectives(localReplaceDirectives): {
             linters+: {
               settings+: {
@@ -2385,6 +2644,15 @@
           },
         },
         blocked: {
+          mapRecommendations(f): { linters+: {
+            settings+: {
+              gomodguard_v2+: {
+                blocked+: {
+                  recommendations: std.map(f, super.recommendations),
+                },
+              },
+            },
+          } },
           withMatchType(matchType): {
             linters+: {
               settings+: {
@@ -2452,6 +2720,20 @@
             },
           },
         },
+        mapAllowed(f): { linters+: {
+          settings+: {
+            gomodguard_v2+: {
+              allowed: std.map(f, super.allowed),
+            },
+          },
+        } },
+        mapBlocked(f): { linters+: {
+          settings+: {
+            gomodguard_v2+: {
+              blocked: std.map(f, super.blocked),
+            },
+          },
+        } },
         withAllowed(allowed): {
           linters+: {
             settings+: {
@@ -2500,6 +2782,20 @@
       },
       gosec: {
         config: {},
+        mapExcludes(f): { linters+: {
+          settings+: {
+            gosec+: {
+              excludes: std.map(f, super.excludes),
+            },
+          },
+        } },
+        mapIncludes(f): { linters+: {
+          settings+: {
+            gosec+: {
+              includes: std.map(f, super.includes),
+            },
+          },
+        } },
         withConcurrency(concurrency): {
           linters+: {
             settings+: {
@@ -2565,6 +2861,20 @@
         },
       },
       gosmopolitan: {
+        mapEscapeHatches(f): { linters+: {
+          settings+: {
+            gosmopolitan+: {
+              'escape-hatches': std.map(f, super['escape-hatches']),
+            },
+          },
+        } },
+        mapWatchForScripts(f): { linters+: {
+          settings+: {
+            gosmopolitan+: {
+              'watch-for-scripts': std.map(f, super['watch-for-scripts']),
+            },
+          },
+        } },
         withAllowTimeLocal(allowTimeLocal): {
           linters+: {
             settings+: {
@@ -2612,6 +2922,20 @@
         },
       },
       govet: {
+        mapDisable(f): { linters+: {
+          settings+: {
+            govet+: {
+              disable: std.map(f, super.disable),
+            },
+          },
+        } },
+        mapEnable(f): { linters+: {
+          settings+: {
+            govet+: {
+              enable: std.map(f, super.enable),
+            },
+          },
+        } },
         settings: {},
         withDisable(disable): {
           linters+: {
@@ -2743,8 +3067,26 @@
         },
       },
       iface: {
+        mapEnable(f): { linters+: {
+          settings+: {
+            iface+: {
+              enable: std.map(f, super.enable),
+            },
+          },
+        } },
         settings: {
           unused: {
+            mapExclude(f): { linters+: {
+              settings+: {
+                iface+: {
+                  settings+: {
+                    unused+: {
+                      exclude: std.map(f, super.exclude),
+                    },
+                  },
+                },
+              },
+            } },
             withExclude(exclude): {
               linters+: {
                 settings+: {
@@ -2817,6 +3159,13 @@
             },
           },
         },
+        mapAlias(f): { linters+: {
+          settings+: {
+            importas+: {
+              alias: std.map(f, super.alias),
+            },
+          },
+        } },
         withAlias(alias): {
           linters+: {
             settings+: {
@@ -2899,6 +3248,20 @@
         },
       },
       ireturn: {
+        mapAllow(f): { linters+: {
+          settings+: {
+            ireturn+: {
+              allow: std.map(f, super.allow),
+            },
+          },
+        } },
+        mapReject(f): { linters+: {
+          settings+: {
+            ireturn+: {
+              reject: std.map(f, super.reject),
+            },
+          },
+        } },
         withAllow(allow): {
           linters+: {
             settings+: {
@@ -2957,6 +3320,13 @@
         },
       },
       loggercheck: {
+        mapRules(f): { linters+: {
+          settings+: {
+            loggercheck+: {
+              rules: std.map(f, super.rules),
+            },
+          },
+        } },
         withKitlog(kitlog): {
           linters+: {
             settings+: {
@@ -3086,6 +3456,20 @@
             },
           },
         },
+        mapExtraWords(f): { linters+: {
+          settings+: {
+            misspell+: {
+              'extra-words': std.map(f, super['extra-words']),
+            },
+          },
+        } },
+        mapIgnoreRules(f): { linters+: {
+          settings+: {
+            misspell+: {
+              'ignore-rules': std.map(f, super['ignore-rules']),
+            },
+          },
+        } },
         withExtraWords(extraWords): {
           linters+: {
             settings+: {
@@ -3142,6 +3526,34 @@
         },
       },
       mnd: {
+        mapChecks(f): { linters+: {
+          settings+: {
+            mnd+: {
+              checks: std.map(f, super.checks),
+            },
+          },
+        } },
+        mapIgnoredFiles(f): { linters+: {
+          settings+: {
+            mnd+: {
+              'ignored-files': std.map(f, super['ignored-files']),
+            },
+          },
+        } },
+        mapIgnoredFunctions(f): { linters+: {
+          settings+: {
+            mnd+: {
+              'ignored-functions': std.map(f, super['ignored-functions']),
+            },
+          },
+        } },
+        mapIgnoredNumbers(f): { linters+: {
+          settings+: {
+            mnd+: {
+              'ignored-numbers': std.map(f, super['ignored-numbers']),
+            },
+          },
+        } },
         withChecks(checks): {
           linters+: {
             settings+: {
@@ -3216,6 +3628,13 @@
         },
       },
       modernize: {
+        mapDisable(f): { linters+: {
+          settings+: {
+            modernize+: {
+              disable: std.map(f, super.disable),
+            },
+          },
+        } },
         withDisable(disable): {
           linters+: {
             settings+: {
@@ -3271,6 +3690,20 @@
             },
           },
         },
+        mapFunctions(f): { linters+: {
+          settings+: {
+            musttag+: {
+              functions: std.map(f, super.functions),
+            },
+          },
+        } },
+        mapFunctionsByName(name, transformFunc): { linters+: {
+          settings+: {
+            musttag+: {
+              functions: [if c.name == name then transformFunc(c) else c for c in super.functions],
+            },
+          },
+        } },
         withFunctions(functions): {
           linters+: {
             settings+: {
@@ -3313,6 +3746,13 @@
         },
       },
       nilnil: {
+        mapCheckedTypes(f): { linters+: {
+          settings+: {
+            nilnil+: {
+              'checked-types': std.map(f, super['checked-types']),
+            },
+          },
+        } },
         withCheckedTypes(checkedTypes): {
           linters+: {
             settings+: {
@@ -3362,6 +3802,13 @@
         },
       },
       nolintlint: {
+        mapAllowNoExplanation(f): { linters+: {
+          settings+: {
+            nolintlint+: {
+              'allow-no-explanation': std.map(f, super['allow-no-explanation']),
+            },
+          },
+        } },
         withAllowNoExplanation(allowNoExplanation): {
           linters+: {
             settings+: {
@@ -3588,6 +4035,13 @@
         },
       },
       predeclared: {
+        mapIgnore(f): { linters+: {
+          settings+: {
+            predeclared+: {
+              ignore: std.map(f, super.ignore),
+            },
+          },
+        } },
         withIgnore(ignore): {
           linters+: {
             settings+: {
@@ -3617,6 +4071,13 @@
         },
       },
       promlinter: {
+        mapDisabledLinters(f): { linters+: {
+          settings+: {
+            promlinter+: {
+              'disabled-linters': std.map(f, super['disabled-linters']),
+            },
+          },
+        } },
         withDisabledLinters(disabledLinters): {
           linters+: {
             settings+: {
@@ -3646,6 +4107,20 @@
         },
       },
       protogetter: {
+        mapSkipFiles(f): { linters+: {
+          settings+: {
+            protogetter+: {
+              'skip-files': std.map(f, super['skip-files']),
+            },
+          },
+        } },
+        mapSkipGeneratedBy(f): { linters+: {
+          settings+: {
+            protogetter+: {
+              'skip-generated-by': std.map(f, super['skip-generated-by']),
+            },
+          },
+        } },
         withReplaceFirstArgInAppend(replaceFirstArgInAppend): {
           linters+: {
             settings+: {
@@ -3702,6 +4177,13 @@
         },
       },
       reassign: {
+        mapPatterns(f): { linters+: {
+          settings+: {
+            reassign+: {
+              patterns: std.map(f, super.patterns),
+            },
+          },
+        } },
         withPatterns(patterns): {
           linters+: {
             settings+: {
@@ -3722,6 +4204,13 @@
         },
       },
       recvcheck: {
+        mapExclusions(f): { linters+: {
+          settings+: {
+            recvcheck+: {
+              exclusions: std.map(f, super.exclusions),
+            },
+          },
+        } },
         withDisableBuiltin(disableBuiltin): {
           linters+: {
             settings+: {
@@ -3752,6 +4241,24 @@
       },
       revive: {
         directives: {
+          mapArguments(f): { linters+: {
+            settings+: {
+              revive+: {
+                directives+: {
+                  arguments: std.map(f, super.arguments),
+                },
+              },
+            },
+          } },
+          mapExclude(f): { linters+: {
+            settings+: {
+              revive+: {
+                directives+: {
+                  exclude: std.map(f, super.exclude),
+                },
+              },
+            },
+          } },
           withArguments(arguments): {
             linters+: {
               settings+: {
@@ -3819,7 +4326,53 @@
             },
           },
         },
+        mapDirectives(f): { linters+: {
+          settings+: {
+            revive+: {
+              directives: std.map(f, super.directives),
+            },
+          },
+        } },
+        mapDirectivesByName(name, transformFunc): { linters+: {
+          settings+: {
+            revive+: {
+              directives: [if c.name == name then transformFunc(c) else c for c in super.directives],
+            },
+          },
+        } },
+        mapRules(f): { linters+: {
+          settings+: {
+            revive+: {
+              rules: std.map(f, super.rules),
+            },
+          },
+        } },
+        mapRulesByName(name, transformFunc): { linters+: {
+          settings+: {
+            revive+: {
+              rules: [if c.name == name then transformFunc(c) else c for c in super.rules],
+            },
+          },
+        } },
         rules: {
+          mapArguments(f): { linters+: {
+            settings+: {
+              revive+: {
+                rules+: {
+                  arguments: std.map(f, super.arguments),
+                },
+              },
+            },
+          } },
+          mapExclude(f): { linters+: {
+            settings+: {
+              revive+: {
+                rules+: {
+                  exclude: std.map(f, super.exclude),
+                },
+              },
+            },
+          } },
           withArguments(arguments): {
             linters+: {
               settings+: {
@@ -3981,6 +4534,13 @@
         },
       },
       rowserrcheck: {
+        mapPackages(f): { linters+: {
+          settings+: {
+            rowserrcheck+: {
+              packages: std.map(f, super.packages),
+            },
+          },
+        } },
         withPackages(packages): {
           linters+: {
             settings+: {
@@ -4001,6 +4561,27 @@
         },
       },
       sloglint: {
+        mapAllowedKeys(f): { linters+: {
+          settings+: {
+            sloglint+: {
+              'allowed-keys': std.map(f, super['allowed-keys']),
+            },
+          },
+        } },
+        mapCustomFuncs(f): { linters+: {
+          settings+: {
+            sloglint+: {
+              'custom-funcs': std.map(f, super['custom-funcs']),
+            },
+          },
+        } },
+        mapForbiddenKeys(f): { linters+: {
+          settings+: {
+            sloglint+: {
+              'forbidden-keys': std.map(f, super['forbidden-keys']),
+            },
+          },
+        } },
         withAllowedKeys(allowedKeys): {
           linters+: {
             settings+: {
@@ -4147,6 +4728,27 @@
         },
       },
       spancheck: {
+        mapChecks(f): { linters+: {
+          settings+: {
+            spancheck+: {
+              checks: std.map(f, super.checks),
+            },
+          },
+        } },
+        mapExtraStartSpanSignatures(f): { linters+: {
+          settings+: {
+            spancheck+: {
+              'extra-start-span-signatures': std.map(f, super['extra-start-span-signatures']),
+            },
+          },
+        } },
+        mapIgnoreCheckSignatures(f): { linters+: {
+          settings+: {
+            spancheck+: {
+              'ignore-check-signatures': std.map(f, super['ignore-check-signatures']),
+            },
+          },
+        } },
         withChecks(checks): {
           linters+: {
             settings+: {
@@ -4203,6 +4805,34 @@
         },
       },
       staticcheck: {
+        mapChecks(f): { linters+: {
+          settings+: {
+            staticcheck+: {
+              checks: std.map(f, super.checks),
+            },
+          },
+        } },
+        mapDotImportWhitelist(f): { linters+: {
+          settings+: {
+            staticcheck+: {
+              'dot-import-whitelist': std.map(f, super['dot-import-whitelist']),
+            },
+          },
+        } },
+        mapHttpStatusCodeWhitelist(f): { linters+: {
+          settings+: {
+            staticcheck+: {
+              'http-status-code-whitelist': std.map(f, super['http-status-code-whitelist']),
+            },
+          },
+        } },
+        mapInitialisms(f): { linters+: {
+          settings+: {
+            staticcheck+: {
+              initialisms: std.map(f, super.initialisms),
+            },
+          },
+        } },
         withChecks(checks): {
           linters+: {
             settings+: {
@@ -4277,6 +4907,13 @@
         },
       },
       tagalign: {
+        mapOrder(f): { linters+: {
+          settings+: {
+            tagalign+: {
+              order: std.map(f, super.order),
+            },
+          },
+        } },
         withAlign(align): {
           linters+: {
             settings+: {
@@ -4326,8 +4963,37 @@
       tagliatelle: {
         case: {
           extendedRules: {},
+          mapIgnoredFields(f): { linters+: {
+            settings+: {
+              tagliatelle+: {
+                case+: {
+                  'ignored-fields': std.map(f, super['ignored-fields']),
+                },
+              },
+            },
+          } },
+          mapOverrides(f): { linters+: {
+            settings+: {
+              tagliatelle+: {
+                case+: {
+                  overrides: std.map(f, super.overrides),
+                },
+              },
+            },
+          } },
           overrides: {
             extendedRules: {},
+            mapIgnoredFields(f): { linters+: {
+              settings+: {
+                tagliatelle+: {
+                  case+: {
+                    overrides+: {
+                      'ignored-fields': std.map(f, super['ignored-fields']),
+                    },
+                  },
+                },
+              },
+            } },
             rules: {},
             withIgnore(ignore): {
               linters+: {
@@ -4528,6 +5194,20 @@
             },
           },
         },
+        mapDisable(f): { linters+: {
+          settings+: {
+            testifylint+: {
+              disable: std.map(f, super.disable),
+            },
+          },
+        } },
+        mapEnable(f): { linters+: {
+          settings+: {
+            testifylint+: {
+              enable: std.map(f, super.enable),
+            },
+          },
+        } },
         requireError: {
           withFnPattern(fnPattern): {
             linters+: {
@@ -4610,6 +5290,13 @@
         },
       },
       testpackage: {
+        mapAllowPackages(f): { linters+: {
+          settings+: {
+            testpackage+: {
+              'allow-packages': std.map(f, super['allow-packages']),
+            },
+          },
+        } },
         withAllowPackages(allowPackages): {
           linters+: {
             settings+: {
@@ -4813,6 +5500,15 @@
       },
       unqueryvet: {
         customRules: {
+          mapPatterns(f): { linters+: {
+            settings+: {
+              unqueryvet+: {
+                'custom-rules'+: {
+                  patterns: std.map(f, super.patterns),
+                },
+              },
+            },
+          } },
           withAction(action): {
             linters+: {
               settings+: {
@@ -4891,6 +5587,34 @@
             },
           },
         },
+        mapAllow(f): { linters+: {
+          settings+: {
+            unqueryvet+: {
+              allow: std.map(f, super.allow),
+            },
+          },
+        } },
+        mapAllowedPatterns(f): { linters+: {
+          settings+: {
+            unqueryvet+: {
+              'allowed-patterns': std.map(f, super['allowed-patterns']),
+            },
+          },
+        } },
+        mapCustomRules(f): { linters+: {
+          settings+: {
+            unqueryvet+: {
+              'custom-rules': std.map(f, super['custom-rules']),
+            },
+          },
+        } },
+        mapIgnoredFunctions(f): { linters+: {
+          settings+: {
+            unqueryvet+: {
+              'ignored-functions': std.map(f, super['ignored-functions']),
+            },
+          },
+        } },
         sqlBuilders: {
           withBun(bun): {
             linters+: {
@@ -5358,6 +6082,20 @@
         },
       },
       varnamelen: {
+        mapIgnoreDecls(f): { linters+: {
+          settings+: {
+            varnamelen+: {
+              'ignore-decls': std.map(f, super['ignore-decls']),
+            },
+          },
+        } },
+        mapIgnoreNames(f): { linters+: {
+          settings+: {
+            varnamelen+: {
+              'ignore-names': std.map(f, super['ignore-names']),
+            },
+          },
+        } },
         withCheckReceiver(checkReceiver): {
           linters+: {
             settings+: {
@@ -5488,6 +6226,41 @@
         },
       },
       wrapcheck: {
+        mapExtraIgnoreSigs(f): { linters+: {
+          settings+: {
+            wrapcheck+: {
+              'extra-ignore-sigs': std.map(f, super['extra-ignore-sigs']),
+            },
+          },
+        } },
+        mapIgnoreInterfaceRegexps(f): { linters+: {
+          settings+: {
+            wrapcheck+: {
+              'ignore-interface-regexps': std.map(f, super['ignore-interface-regexps']),
+            },
+          },
+        } },
+        mapIgnorePackageGlobs(f): { linters+: {
+          settings+: {
+            wrapcheck+: {
+              'ignore-package-globs': std.map(f, super['ignore-package-globs']),
+            },
+          },
+        } },
+        mapIgnoreSigRegexps(f): { linters+: {
+          settings+: {
+            wrapcheck+: {
+              'ignore-sig-regexps': std.map(f, super['ignore-sig-regexps']),
+            },
+          },
+        } },
+        mapIgnoreSigs(f): { linters+: {
+          settings+: {
+            wrapcheck+: {
+              'ignore-sigs': std.map(f, super['ignore-sigs']),
+            },
+          },
+        } },
         withExtraIgnoreSigs(extraIgnoreSigs): {
           linters+: {
             settings+: {
@@ -5589,6 +6362,27 @@
         },
       },
       wsl: {
+        mapAllowCuddleWithCalls(f): { linters+: {
+          settings+: {
+            wsl+: {
+              'allow-cuddle-with-calls': std.map(f, super['allow-cuddle-with-calls']),
+            },
+          },
+        } },
+        mapAllowCuddleWithRhs(f): { linters+: {
+          settings+: {
+            wsl+: {
+              'allow-cuddle-with-rhs': std.map(f, super['allow-cuddle-with-rhs']),
+            },
+          },
+        } },
+        mapErrorVariableNames(f): { linters+: {
+          settings+: {
+            wsl+: {
+              'error-variable-names': std.map(f, super['error-variable-names']),
+            },
+          },
+        } },
         withAllowAssignAndAnything(allowAssignAndAnything): {
           linters+: {
             settings+: {
@@ -5744,6 +6538,20 @@
         },
       },
       wslV5: {
+        mapDisable(f): { linters+: {
+          settings+: {
+            wsl_v5+: {
+              disable: std.map(f, super.disable),
+            },
+          },
+        } },
+        mapEnable(f): { linters+: {
+          settings+: {
+            wsl_v5+: {
+              enable: std.map(f, super.enable),
+            },
+          },
+        } },
         withAllowFirstInBlock(allowFirstInBlock): {
           linters+: {
             settings+: {
@@ -6018,6 +6826,9 @@
         },
       },
     },
+    mapSortOrder(f): { output+: {
+      'sort-order': std.map(f, super['sort-order']),
+    } },
     withPathMode(pathMode): {
       output+: {
         'path-mode': pathMode,
@@ -6045,6 +6856,9 @@
     },
   },
   run: {
+    mapBuildTags(f): { run+: {
+      'build-tags': std.map(f, super['build-tags']),
+    } },
     withAllowParallelRunners(allowParallelRunners): {
       run+: {
         'allow-parallel-runners': allowParallelRunners,
@@ -6107,7 +6921,15 @@
     },
   },
   severity: {
+    mapRules(f): { severity+: {
+      rules: std.map(f, super.rules),
+    } },
     rules: {
+      mapLinters(f): { severity+: {
+        rules+: {
+          linters: std.map(f, super.linters),
+        },
+      } },
       withLinters(linters): {
         severity+: {
           rules+: {

@@ -79,6 +79,26 @@ func modFunction(name string, f model.Modifier) []j.Type {
 		)
 	}
 
+	// mapXyz(f) - for all array types
+	if f.Type == swagger.TypeArray {
+		mapRet := mapFnResult(f)
+		mapName := "map" + strings.TrimPrefix(name, "with")
+		out = append(out,
+			d.Func(mapName, f.Help+"\n\n**Note:** This function maps each element using the provided function", d.Args("f", "function")),
+			j.Func(mapName, j.Args(j.Required(j.Ref("f", ""))), j.ConciseObject("", mapRet)),
+		)
+	}
+
+	// mapXyzByName(name, transformFunc) - only if items have "name" field
+	if f.Type == swagger.TypeArray && f.ItemHasName {
+		mapByNameRet := mapByNameFnResult(f)
+		mapByNameName := "map" + strings.TrimPrefix(name, "with") + "ByName"
+		out = append(out,
+			d.Func(mapByNameName, f.Help+"\n\n**Note:** This function maps the element matching name using the provided function", d.Args("name", "string", "transformFunc", "function")),
+			j.Func(mapByNameName, j.Args(j.Required(j.String("name", "")), j.Required(j.Ref("transformFunc", ""))), j.ConciseObject("", mapByNameRet)),
+		)
+	}
+
 	return out
 }
 
@@ -110,6 +130,60 @@ func fnResult(f model.Modifier, adder bool) j.Type {
 	}
 
 	return ret
+}
+
+func mapFnResult(f model.Modifier) j.Type {
+	elems := strings.Split(f.Target, ".")
+	fieldName := elems[len(elems)-1]
+	superRef := superRefString(fieldName)
+	ret := reduceReverse(elems, func(i int, s string, o j.Type) j.Type {
+		switch i {
+		case 0:
+			return j.Call(s, "std.map", j.Args(
+				j.CallArgFrom(j.Ref("", "f")),
+				j.CallArgFrom(j.Ref("", superRef)),
+			))
+		case 1:
+			return j.ConciseObject(s, o)
+		default:
+			return j.ConciseObject(s, j.Merge(o))
+		}
+	})
+	if len(elems) > 1 {
+		ret = j.Merge(ret)
+	}
+	return ret
+}
+
+func mapByNameFnResult(f model.Modifier) j.Type {
+	elems := strings.Split(f.Target, ".")
+	fieldName := elems[len(elems)-1]
+	superRef := superRefString(fieldName)
+	ret := reduceReverse(elems, func(i int, s string, o j.Type) j.Type {
+		switch i {
+		case 0:
+			return j.ArrayComprehension(s, "c", "name",
+				j.Ref("", superRef),
+				j.Ref("", "name"),
+				j.Call("", "transformFunc", j.Args(j.CallArgFrom(j.Ref("", "c")))),
+			)
+		case 1:
+			return j.ConciseObject(s, o)
+		default:
+			return j.ConciseObject(s, j.Merge(o))
+		}
+	})
+	if len(elems) > 1 {
+		ret = j.Merge(ret)
+	}
+	return ret
+}
+
+func superRefString(fieldName string) string {
+	if strings.ContainsAny(fieldName, "-./") || strings.HasPrefix(fieldName, "#") {
+		return fmt.Sprintf("super['%s']", fieldName)
+	}
+	return "super." + fieldName
 }
 
 // reduceReverse calls f for each in arr in reverse order.

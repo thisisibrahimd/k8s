@@ -1,5 +1,8 @@
 {
   linterOptions: {
+    mapExclude(f): { linterOptions+: {
+      exclude: std.map(f, super.exclude),
+    } },
     withExclude(exclude): {
       linterOptions+: {
         exclude: if std.isArray(v=exclude) then exclude else [exclude],

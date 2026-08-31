@@ -8,6 +8,11 @@
   },
   clients: {
     http: {
+      mapPrivateIpExceptionUrls(f): { clients+: {
+        http+: {
+          private_ip_exception_urls: std.map(f, super.private_ip_exception_urls),
+        },
+      } },
       withDisallowPrivateIpRanges(disallowPrivateIpRanges): {
         clients+: {
           http+: {
@@ -31,6 +36,11 @@
       },
     },
     webHook: {
+      mapHeaderAllowlist(f): { clients+: {
+        web_hook+: {
+          header_allowlist: std.map(f, super.header_allowlist),
+        },
+      } },
       withHeaderAllowlist(headerAllowlist): {
         clients+: {
           web_hook+: {
@@ -168,6 +178,9 @@
         },
       },
     },
+    mapChannels(f): { courier+: {
+      channels: std.map(f, super.channels),
+    } },
     smtp: {
       headers: {},
       withClientCertPath(clientCertPath): {
@@ -984,6 +997,9 @@
     },
   },
   identity: {
+    mapSchemas(f): { identity+: {
+      schemas: std.map(f, super.schemas),
+    } },
     schemas: {
       withId(id): {
         identity+: {
@@ -1045,6 +1061,8 @@
       },
     },
   },
+  mapConfig(f): { config: std.map(f, super.config) },
+  mapOrganizations(f): { organizations: std.map(f, super.organizations) },
   oauth2Provider: {
     headers: {},
     withOverrideReturnTo(overrideReturnTo): {
@@ -1066,6 +1084,18 @@
     },
   },
   secrets: {
+    mapCipher(f): { secrets+: {
+      cipher: std.map(f, super.cipher),
+    } },
+    mapCookie(f): { secrets+: {
+      cookie: std.map(f, super.cookie),
+    } },
+    mapDefault(f): { secrets+: {
+      default: std.map(f, super.default),
+    } },
+    mapPagination(f): { secrets+: {
+      pagination: std.map(f, super.pagination),
+    } },
     withCipher(cipher): {
       secrets+: {
         cipher: if std.isArray(v=cipher) then cipher else [cipher],
@@ -1134,6 +1164,17 @@
       login: {
         after: {
           code: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                login+: {
+                  after+: {
+                    code+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1175,6 +1216,17 @@
             },
           },
           lookupSecret: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                login+: {
+                  after+: {
+                    lookup_secret+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1215,7 +1267,27 @@
               },
             },
           },
+          mapHooks(f): { selfservice+: {
+            flows+: {
+              login+: {
+                after+: {
+                  hooks: std.map(f, super.hooks),
+                },
+              },
+            },
+          } },
           oidc: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                login+: {
+                  after+: {
+                    oidc+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1257,6 +1329,17 @@
             },
           },
           passkey: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                login+: {
+                  after+: {
+                    passkey+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1298,6 +1381,17 @@
             },
           },
           password: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                login+: {
+                  after+: {
+                    password+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1339,6 +1433,17 @@
             },
           },
           totp: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                login+: {
+                  after+: {
+                    totp+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1380,6 +1485,17 @@
             },
           },
           webauthn: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                login+: {
+                  after+: {
+                    webauthn+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1455,6 +1571,15 @@
           },
         },
         before: {
+          mapHooks(f): { selfservice+: {
+            flows+: {
+              login+: {
+                before+: {
+                  hooks: std.map(f, super.hooks),
+                },
+              },
+            },
+          } },
           withHooks(hooks): {
             selfservice+: {
               flows+: {
@@ -1523,6 +1648,15 @@
       },
       recovery: {
         after: {
+          mapHooks(f): { selfservice+: {
+            flows+: {
+              recovery+: {
+                after+: {
+                  hooks: std.map(f, super.hooks),
+                },
+              },
+            },
+          } },
           withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
             selfservice+: {
               flows+: {
@@ -1558,6 +1692,15 @@
           },
         },
         before: {
+          mapHooks(f): { selfservice+: {
+            flows+: {
+              recovery+: {
+                before+: {
+                  hooks: std.map(f, super.hooks),
+                },
+              },
+            },
+          } },
           withHooks(hooks): {
             selfservice+: {
               flows+: {
@@ -1630,6 +1773,17 @@
       registration: {
         after: {
           code: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                registration+: {
+                  after+: {
+                    code+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1670,7 +1824,27 @@
               },
             },
           },
+          mapHooks(f): { selfservice+: {
+            flows+: {
+              registration+: {
+                after+: {
+                  hooks: std.map(f, super.hooks),
+                },
+              },
+            },
+          } },
           oidc: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                registration+: {
+                  after+: {
+                    oidc+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1712,6 +1886,17 @@
             },
           },
           passkey: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                registration+: {
+                  after+: {
+                    passkey+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1753,6 +1938,17 @@
             },
           },
           password: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                registration+: {
+                  after+: {
+                    password+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1794,6 +1990,17 @@
             },
           },
           webauthn: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                registration+: {
+                  after+: {
+                    webauthn+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1869,6 +2076,15 @@
           },
         },
         before: {
+          mapHooks(f): { selfservice+: {
+            flows+: {
+              registration+: {
+                before+: {
+                  hooks: std.map(f, super.hooks),
+                },
+              },
+            },
+          } },
           withHooks(hooks): {
             selfservice+: {
               flows+: {
@@ -1950,6 +2166,17 @@
       settings: {
         after: {
           lookupSecret: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                settings+: {
+                  after+: {
+                    lookup_secret+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -1990,7 +2217,27 @@
               },
             },
           },
+          mapHooks(f): { selfservice+: {
+            flows+: {
+              settings+: {
+                after+: {
+                  hooks: std.map(f, super.hooks),
+                },
+              },
+            },
+          } },
           oidc: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                settings+: {
+                  after+: {
+                    oidc+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -2032,6 +2279,17 @@
             },
           },
           passkey: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                settings+: {
+                  after+: {
+                    passkey+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -2073,6 +2331,17 @@
             },
           },
           password: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                settings+: {
+                  after+: {
+                    password+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -2114,6 +2383,17 @@
             },
           },
           profile: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                settings+: {
+                  after+: {
+                    profile+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -2155,6 +2435,17 @@
             },
           },
           totp: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                settings+: {
+                  after+: {
+                    totp+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -2196,6 +2487,17 @@
             },
           },
           webauthn: {
+            mapHooks(f): { selfservice+: {
+              flows+: {
+                settings+: {
+                  after+: {
+                    webauthn+: {
+                      hooks: std.map(f, super.hooks),
+                    },
+                  },
+                },
+              },
+            } },
             withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
               selfservice+: {
                 flows+: {
@@ -2271,6 +2573,15 @@
           },
         },
         before: {
+          mapHooks(f): { selfservice+: {
+            flows+: {
+              settings+: {
+                before+: {
+                  hooks: std.map(f, super.hooks),
+                },
+              },
+            },
+          } },
           withHooks(hooks): {
             selfservice+: {
               flows+: {
@@ -2333,6 +2644,15 @@
       },
       verification: {
         after: {
+          mapHooks(f): { selfservice+: {
+            flows+: {
+              verification+: {
+                after+: {
+                  hooks: std.map(f, super.hooks),
+                },
+              },
+            },
+          } },
           withDefaultBrowserReturnUrl(defaultBrowserReturnUrl): {
             selfservice+: {
               flows+: {
@@ -2368,6 +2688,15 @@
           },
         },
         before: {
+          mapHooks(f): { selfservice+: {
+            flows+: {
+              verification+: {
+                before+: {
+                  hooks: std.map(f, super.hooks),
+                },
+              },
+            },
+          } },
           withHooks(hooks): {
             selfservice+: {
               flows+: {
@@ -2438,10 +2767,33 @@
         },
       },
     },
+    mapAllowedReturnUrls(f): { selfservice+: {
+      allowed_return_urls: std.map(f, super.allowed_return_urls),
+    } },
     methods: {
       b2b: {
         config: {
+          mapOrganizations(f): { selfservice+: {
+            methods+: {
+              b2b+: {
+                config+: {
+                  organizations: std.map(f, super.organizations),
+                },
+              },
+            },
+          } },
           organizations: {
+            mapDomains(f): { selfservice+: {
+              methods+: {
+                b2b+: {
+                  config+: {
+                    organizations+: {
+                      domains: std.map(f, super.domains),
+                    },
+                  },
+                },
+              },
+            } },
             withDomains(domains): {
               selfservice+: {
                 methods+: {
@@ -2631,6 +2983,15 @@
       },
       oidc: {
         config: {
+          mapProviders(f): { selfservice+: {
+            methods+: {
+              oidc+: {
+                config+: {
+                  providers: std.map(f, super.providers),
+                },
+              },
+            },
+          } },
           withBaseRedirectUri(baseRedirectUri): {
             selfservice+: {
               methods+: {
@@ -2678,6 +3039,17 @@
       passkey: {
         config: {
           rp: {
+            mapOrigins(f): { selfservice+: {
+              methods+: {
+                passkey+: {
+                  config+: {
+                    rp+: {
+                      origins: std.map(f, super.origins),
+                    },
+                  },
+                },
+              },
+            } },
             withDisplayName(displayName): {
               selfservice+: {
                 methods+: {
@@ -2953,6 +3325,17 @@
       webauthn: {
         config: {
           rp: {
+            mapOrigins(f): { selfservice+: {
+              methods+: {
+                webauthn+: {
+                  config+: {
+                    rp+: {
+                      origins: std.map(f, super.origins),
+                    },
+                  },
+                },
+              },
+            } },
             withDisplayName(displayName): {
               selfservice+: {
                 methods+: {
@@ -3157,6 +3540,34 @@
     },
     public: {
       cors: {
+        mapAllowedHeaders(f): { serve+: {
+          public+: {
+            cors+: {
+              allowed_headers: std.map(f, super.allowed_headers),
+            },
+          },
+        } },
+        mapAllowedMethods(f): { serve+: {
+          public+: {
+            cors+: {
+              allowed_methods: std.map(f, super.allowed_methods),
+            },
+          },
+        } },
+        mapAllowedOrigins(f): { serve+: {
+          public+: {
+            cors+: {
+              allowed_origins: std.map(f, super.allowed_origins),
+            },
+          },
+        } },
+        mapExposedHeaders(f): { serve+: {
+          public+: {
+            cors+: {
+              exposed_headers: std.map(f, super.exposed_headers),
+            },
+          },
+        } },
         withAllowCredentials(allowCredentials): {
           serve+: {
             public+: {
