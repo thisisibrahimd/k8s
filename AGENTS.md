@@ -1,0 +1,54 @@
+# k8s-gen — Agent Notes
+
+## What this repo does
+Code generator for Jsonnet Kubernetes libraries. Consumes OpenAPI v2 (Swagger), CRDs, or JSON Schema → produces `.libsonnet` files.
+
+## Key commands
+```bash
+go test ./...                          # run all tests
+make test                              # same
+make libs/<name>                       # generate a library from libs/<name>/config.json
+make libs/<name> VERSIONS="1.27.0"     # regenerate specific versions only
+go build -o k8s-gen .                  # build binary (Makefile expects ./k8s-gen in repo root)
+```
+
+## Golden tests
+```bash
+make update-golden-test-data           # regenerate all golden .libsonnet fixtures
+go test ./pkg/complier/jsonschemacomplier/... -update   # same, targeted
+```
+Golden files live in `pkg/complier/jsonschemacomplier/testdata/TestCompileLibsonnet/*.golden.libsonnet`.
+
+## Code generation pipeline
+```
+config.json → specGenerator (optional) → specs[] → model.Load() → render → writer (disk)
+```
+- **OpenAPI/CRD path**: `pkg/model/modifiers.go` (model) → `pkg/render/modifiers.go` (render)
+- **JSON Schema path**: `pkg/complier/jsonschemacomplier/jsonschemacomplier.go` (standalone compiler)
+- **Builder**: `pkg/builder/` — generates Jsonnet AST from Go (Func, Object, Call, List, etc.)
+
+## Modifiers model
+For each field, the generator creates:
+- `withXyz(value)` — replaces the value (for arrays: accepts single or list, wraps if needed)
+- `withXyzMixin(value)` — appends to existing value (`+:`)
+- For array-of-object fields: nested helpers like `containers: { withName(), withImage() }`
+- `mapXyz(f)` — maps `std.map(f, super.field)` over each element (all arrays)
+- `mapXyzByName(name, transformFunc)` — transforms only the element where `item.name == name` (arrays whose items have a `"name"` property)
+
+## Custom patches vs extensions
+- **`custom/`** — auto-merged into `main.libsonnet` during generation. Declare via `"patchDir": "custom/core"` in `config.json`.
+- **`extensions/`** — NOT auto-applied. User must import manually. Declare via `"extensionDir": "extensions/core"`.
+
+## Toolchain
+- Go 1.26+ (see `go.mod`)
+- `go-jsonnet` 0.22.0 for running generated libsonnet
+- Managed via `mise.toml` — run `mise install` if tools are missing
+- CI: `make test` on PR/push to main (`.github/workflows/build.yml`)
+
+## Gotchas
+- Binary installs as `k8s` (module path), not `k8s-gen`. Use `go build -o k8s-gen .` or rename.
+- The Makefile expects `./k8s-gen` in the repo root — build before running `make libs/*`.
+- `specGenerator` and manual `specs` are mutually exclusive modes in `config.json`.
+- GitHub auto-discovery needs `GITHUB_TOKEN` for rate limits (60/hr unauth, 5000/hr with token).
+- When adding new builder types, update both `String()` output and `Name()` — the Object builder uses child `Name()` as the object key.
+- Hyphenated field names (e.g. `local-prefixes`) need bracket notation in generated Jsonnet: `super['field-name']` not `super.field-name`.

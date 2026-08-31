@@ -61,6 +61,10 @@ func TestCompileLibsonnet(t *testing.T) {
 			name:   "tslint-schema",
 			schema: comp.MustCompile("testdata/tslint-schema.json"),
 		},
+		{
+			name:   "map-test-schema",
+			schema: comp.MustCompile("testdata/map-test-schema.json"),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -1,6 +1,14 @@
 {
   featureGates: {},
+  mapContainerdConfigPatches(f): { containerdConfigPatches: std.map(f, super.containerdConfigPatches) },
+  mapContainerdConfigPatchesJson6902(f): { containerdConfigPatchesJSON6902: std.map(f, super.containerdConfigPatchesJSON6902) },
+  mapKubeadmConfigPatches(f): { kubeadmConfigPatches: std.map(f, super.kubeadmConfigPatches) },
+  mapKubeadmConfigPatchesJson6902(f): { kubeadmConfigPatchesJSON6902: std.map(f, super.kubeadmConfigPatchesJSON6902) },
+  mapNodes(f): { nodes: std.map(f, super.nodes) },
   networking: {
+    mapDnsSearch(f): { networking+: {
+      dnsSearch: std.map(f, super.dnsSearch),
+    } },
     withApiServerAddress(apiServerAddress): {
       networking+: {
         apiServerAddress: apiServerAddress,

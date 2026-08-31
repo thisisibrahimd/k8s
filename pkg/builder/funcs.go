@@ -49,6 +49,8 @@ func argsString(m []Type, breakLine bool) string {
 	for _, v := range m {
 		if _, ok := v.(RequiredArgType); ok {
 			s += fmt.Sprintf("%s"+sep, v.Name())
+		} else if _, ok := v.(CallArg); ok {
+			s += fmt.Sprintf("%s"+sep, v.Name())
 		} else {
 			s += fmt.Sprintf("%s=%s"+sep, v.Name(), v.String())
 		}
@@ -88,4 +90,22 @@ func (r RequiredArgType) String() string {
 
 func Required(t Type) RequiredArgType {
 	return RequiredArgType{t}
+}
+
+// CallArg wraps a type for use as a positional argument in function calls.
+// Unlike RequiredArgType, it outputs only the value without name=.
+type CallArg struct {
+	value Type
+}
+
+func (c CallArg) Name() string {
+	return c.value.String()
+}
+
+func (c CallArg) String() string {
+	return c.value.String()
+}
+
+func CallArgFrom(t Type) CallArg {
+	return CallArg{value: t}
 }

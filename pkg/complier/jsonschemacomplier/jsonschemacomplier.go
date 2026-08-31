@@ -2,6 +2,7 @@ package jsonschemacomplier
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/thisisibrahimd/k8s/pkg/builder"
 	"github.com/thisisibrahimd/k8s/pkg/render"
@@ -15,6 +16,14 @@ func genAdditiveObjWrapper(in builder.Type, path []string) builder.Type {
 	}
 
 	return builder.Merge(builder.Object(path[0], genAdditiveObjWrapper(in, path[1:])))
+}
+
+// superRef generates a proper super.field reference, using bracket notation for special names
+func superRef(fieldName string) builder.Type {
+	if strings.ContainsAny(fieldName, "-./") || strings.HasPrefix(fieldName, "#") {
+		return builder.Ref("", fmt.Sprintf("super['%s']", fieldName))
+	}
+	return builder.Ref("", "super."+fieldName)
 }
 
 func CompileLibsonnet(s *jsonschema.Schema, name string, curPath []string) builder.Type {
@@ -95,6 +104,57 @@ func CompileLibsonnet(s *jsonschema.Schema, name string, curPath []string) build
 				),
 			)
 			propTypes = append(propTypes, propTypeMixin)
+
+			// nested helpers for array item properties
+			if p.Items != nil {
+				if itemSchema, ok := p.Items.(*jsonschema.Schema); ok && len(itemSchema.Properties) > 0 {
+					nestedObj := CompileLibsonnet(itemSchema, strcase.LowerCamelCase(pName), newPath)
+					propTypes = append(propTypes, nestedObj)
+				}
+			}
+
+			// mapXyz(f) - for all arrays
+			mapPath := append(append([]string{}, curPath...), pName)
+			mapInner := builder.Call(pName, "std.map", builder.Args(
+				builder.CallArgFrom(builder.Ref("", "f")),
+				builder.CallArgFrom(superRef(pName)),
+			))
+			mapWrapped := genAdditiveObjWrapper(mapInner, mapPath[:len(mapPath)-1])
+			if len(mapPath) > 1 {
+				mapWrapped = builder.Merge(mapWrapped)
+			}
+			mapFunc := builder.Func(
+				fmt.Sprintf("map%s", strcase.UpperCamelCase(pName)),
+				builder.Args(builder.Required(builder.Ref("f", ""))),
+				builder.ConciseObject("", mapWrapped),
+			)
+			propTypes = append(propTypes, mapFunc)
+
+			// mapXyzByName(name, transformFunc) - only if items have "name" field
+			hasName := false
+			if itemSchema, ok := p.Items.(*jsonschema.Schema); ok {
+				_, hasName = itemSchema.Properties["name"]
+			}
+			if hasName {
+				comprehension := builder.ArrayComprehension(pName, "c", "name",
+					superRef(pName),
+					builder.Ref("", "name"),
+					builder.Call("", "transformFunc", builder.Args(builder.CallArgFrom(builder.Ref("", "c")))),
+				)
+				mapByNameWrapped := genAdditiveObjWrapper(comprehension, mapPath[:len(mapPath)-1])
+				if len(mapPath) > 1 {
+					mapByNameWrapped = builder.Merge(mapByNameWrapped)
+				}
+				mapByNameFunc := builder.Func(
+					fmt.Sprintf("map%sByName", strcase.UpperCamelCase(pName)),
+					builder.Args(
+						builder.Required(builder.String("name", "")),
+						builder.Required(builder.Ref("transformFunc", "")),
+					),
+					builder.ConciseObject("", mapByNameWrapped),
+				)
+				propTypes = append(propTypes, mapByNameFunc)
+			}
 
 		case "object":
 			propType := CompileLibsonnet(p, strcase.LowerCamelCase(pName), newPath)

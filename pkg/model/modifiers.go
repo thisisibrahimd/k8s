@@ -32,6 +32,9 @@ type Modifier struct {
 
 	// Type is the type of the modified value
 	Type swagger.Type `json:"type"`
+
+	// ItemHasName indicates array items have a "name" field, enabling mapXyzByName
+	ItemHasName bool `json:"itemHasName,omitempty"`
 }
 
 // Constructor creates new objects
@@ -129,6 +132,11 @@ func newModifier(name string, p *swagger.Schema, ctx string, inArray bool,
 			Arg:    Parameter{Key: fnArg(name)},
 			Target: strings.TrimPrefix(ctx+"."+name, "."),
 			Type:   p.Type,
+		}
+
+		// check if array items have a "name" field
+		if p.Type == swagger.TypeArray && p.Items != nil {
+			_, fn.ItemHasName = p.Items.Props["name"]
 		}
 
 		return fmt.Sprintf("with%s", normalizedTitle(name)), fn

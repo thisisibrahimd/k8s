@@ -269,10 +269,70 @@ Nested objects produce nested functions and additive objects (`+:`), so you can 
 | `--schema` | Yes | Path or URL to the JSON Schema file. |
 | `--output` | No | Output file path. If omitted, prints to stdout. |
 
-#### Limitations
+#### Array support
 
-- Array properties are supported with a basic setter (`withX`) and mixin (`withXMixin`). If the
-  argument is not an array, it is automatically wrapped in a list.
+Array properties generate three function types:
+
+```jsonnet
+{
+  // Replaces the entire array (wraps single values in a list automatically)
+  withTags(tags): {
+    tags: if std.isArray(v=tags) then tags else [tags],
+  },
+  // Appends to the existing array
+  withTagsMixin(tags): {
+    tags+: if std.isArray(v=tags) then tags else [tags],
+  },
+  // Transforms each element using a function
+  mapTags(f): {
+    tags: std.map(f, super.tags),
+  },
+}
+```
+
+For arrays of objects, nested helpers are also generated for constructing individual items:
+
+```jsonnet
+{
+  containers: {
+    withName(name): { containers+: { name: name } },
+    withImage(image): { containers+: { image: image } },
+  },
+}
+```
+
+If the array items have a `"name"` field, an additional `mapXyzByName` helper is generated for targeted updates:
+
+```jsonnet
+{
+  // Transforms only the element where item.name matches
+  mapContainersByName(name, transformFunc): {
+    containers: [if c.name == name then transformFunc(c) else c for c in super.containers],
+  },
+}
+```
+
+Example usage:
+
+```jsonnet
+local lib = import './config.libsonnet';
+
+// Add containers and patch one by name
+local base = lib
+  + lib.withContainers([
+      { name: 'app', image: 'myapp:v1' },
+      { name: 'sidecar', image: 'busybox' },
+    ])
+  + lib.mapContainersByName('app', function(c)
+      c + { image: 'myapp:v2' }
+    );
+
+// Transform all tags
+base + lib.mapTags(function(t) 'release-' + t)
+```
+
+#### Other limitations
+
 - Schema composition with `anyOf`, `oneOf`, or external `$ref` is limited.
 - Empty object properties (`{}`) may appear when the schema declares an object but provides no properties.
 
@@ -300,13 +360,12 @@ libs/k8s/
 ├── config.json                      # Config to generate the k8s jsonnet libraries
 └── custom
     └── core
-      	├── apps.libsonnet           # Constructors for `apps/v1` (daemonSet, deployment, statefulSet), ported from `ksonnet-gen` and `kausal.libsonnet`
+        ├── apps.libsonnet           # Constructors for `apps/v1` (daemonSet, deployment, statefulSet), ported from `ksonnet-gen` and `kausal.libsonnet`
         ├── autoscaling.libsonnet    # Extends `autoscaling/v1` and `autoscaling/v2`
-      	├── batch.libsonnet          # Constructors for `batch/v1` (cronJob), ported from `kausal.libsonnet`
-      	├── core.libsonnet           # Constructors for `core/v1`, ported from `ksonnet-gen` and `kausal.libsonnet`
+        ├── batch.libsonnet          # Constructors for `batch/v1` (cronJob), ported from `kausal.libsonnet`
+        ├── core.libsonnet           # Constructors for `core/v1`, ported from `ksonnet-gen` and `kausal.libsonnet`
         ├── list.libsonnet           # Adds `core.v1.List`
-      	├── mapContainers.libsonnet  # Adds `mapContainers` functions for fields that support them
-      	├── rbac.libsonnet           # Adds helper functions to rbac objects
+        ├── rbac.libsonnet           # Adds helper functions to rbac objects
         └── volumeMounts.libsonnet   # Adds helper functions to mount volumes
 ```
 
