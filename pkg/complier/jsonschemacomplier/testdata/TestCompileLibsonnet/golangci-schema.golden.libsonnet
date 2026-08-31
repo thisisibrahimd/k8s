@@ -88,6 +88,30 @@
         },
       },
       gofmt: {
+        rewriteRules: {
+          withPattern(pattern): {
+            formatters+: {
+              settings+: {
+                gofmt+: {
+                  'rewrite-rules'+: {
+                    pattern: pattern,
+                  },
+                },
+              },
+            },
+          },
+          withReplacement(replacement): {
+            formatters+: {
+              settings+: {
+                gofmt+: {
+                  'rewrite-rules'+: {
+                    replacement: replacement,
+                  },
+                },
+              },
+            },
+          },
+        },
         withRewriteRules(rewriteRules): {
           formatters+: {
             settings+: {
@@ -264,6 +288,62 @@
   },
   linters: {
     exclusions: {
+      rules: {
+        withLinters(linters): {
+          linters+: {
+            exclusions+: {
+              rules+: {
+                linters: if std.isArray(v=linters) then linters else [linters],
+              },
+            },
+          },
+        },
+        withLintersMixin(linters): {
+          linters+: {
+            exclusions+: {
+              rules+: {
+                linters+: if std.isArray(v=linters) then linters else [linters],
+              },
+            },
+          },
+        },
+        withPath(path): {
+          linters+: {
+            exclusions+: {
+              rules+: {
+                path: path,
+              },
+            },
+          },
+        },
+        withPathExcept(pathExcept): {
+          linters+: {
+            exclusions+: {
+              rules+: {
+                'path-except': pathExcept,
+              },
+            },
+          },
+        },
+        withSource(source): {
+          linters+: {
+            exclusions+: {
+              rules+: {
+                source: source,
+              },
+            },
+          },
+        },
+        withText(text): {
+          linters+: {
+            exclusions+: {
+              rules+: {
+                text: text,
+              },
+            },
+          },
+        },
+      },
       withGenerated(generated): {
         linters+: {
           exclusions+: {
@@ -743,6 +823,54 @@
         },
       },
       errorlint: {
+        allowedErrors: {
+          withErr(err): {
+            linters+: {
+              settings+: {
+                errorlint+: {
+                  'allowed-errors'+: {
+                    err: err,
+                  },
+                },
+              },
+            },
+          },
+          withFun(fun): {
+            linters+: {
+              settings+: {
+                errorlint+: {
+                  'allowed-errors'+: {
+                    fun: fun,
+                  },
+                },
+              },
+            },
+          },
+        },
+        allowedErrorsWildcard: {
+          withErr(err): {
+            linters+: {
+              settings+: {
+                errorlint+: {
+                  'allowed-errors-wildcard'+: {
+                    err: err,
+                  },
+                },
+              },
+            },
+          },
+          withFun(fun): {
+            linters+: {
+              settings+: {
+                errorlint+: {
+                  'allowed-errors-wildcard'+: {
+                    fun: fun,
+                  },
+                },
+              },
+            },
+          },
+        },
         withAllowedErrors(allowedErrors): {
           linters+: {
             settings+: {
@@ -994,6 +1122,41 @@
         },
       },
       forbidigo: {
+        forbid: {
+          withMsg(msg): {
+            linters+: {
+              settings+: {
+                forbidigo+: {
+                  forbid+: {
+                    msg: msg,
+                  },
+                },
+              },
+            },
+          },
+          withPattern(pattern): {
+            linters+: {
+              settings+: {
+                forbidigo+: {
+                  forbid+: {
+                    pattern: pattern,
+                  },
+                },
+              },
+            },
+          },
+          withPkg(pkg): {
+            linters+: {
+              settings+: {
+                forbidigo+: {
+                  forbid+: {
+                    pkg: pkg,
+                  },
+                },
+              },
+            },
+          },
+        },
         withAnalyzeTypes(analyzeTypes): {
           linters+: {
             settings+: {
@@ -2186,6 +2349,109 @@
         },
       },
       gomodguardV2: {
+        allowed: {
+          withMatchType(matchType): {
+            linters+: {
+              settings+: {
+                gomodguard_v2+: {
+                  allowed+: {
+                    'match-type': matchType,
+                  },
+                },
+              },
+            },
+          },
+          withModule(module): {
+            linters+: {
+              settings+: {
+                gomodguard_v2+: {
+                  allowed+: {
+                    module: module,
+                  },
+                },
+              },
+            },
+          },
+          withVersion(version): {
+            linters+: {
+              settings+: {
+                gomodguard_v2+: {
+                  allowed+: {
+                    version: version,
+                  },
+                },
+              },
+            },
+          },
+        },
+        blocked: {
+          withMatchType(matchType): {
+            linters+: {
+              settings+: {
+                gomodguard_v2+: {
+                  blocked+: {
+                    'match-type': matchType,
+                  },
+                },
+              },
+            },
+          },
+          withModule(module): {
+            linters+: {
+              settings+: {
+                gomodguard_v2+: {
+                  blocked+: {
+                    module: module,
+                  },
+                },
+              },
+            },
+          },
+          withReason(reason): {
+            linters+: {
+              settings+: {
+                gomodguard_v2+: {
+                  blocked+: {
+                    reason: reason,
+                  },
+                },
+              },
+            },
+          },
+          withRecommendations(recommendations): {
+            linters+: {
+              settings+: {
+                gomodguard_v2+: {
+                  blocked+: {
+                    recommendations: if std.isArray(v=recommendations) then recommendations else [recommendations],
+                  },
+                },
+              },
+            },
+          },
+          withRecommendationsMixin(recommendations): {
+            linters+: {
+              settings+: {
+                gomodguard_v2+: {
+                  blocked+: {
+                    recommendations+: if std.isArray(v=recommendations) then recommendations else [recommendations],
+                  },
+                },
+              },
+            },
+          },
+          withVersion(version): {
+            linters+: {
+              settings+: {
+                gomodguard_v2+: {
+                  blocked+: {
+                    version: version,
+                  },
+                },
+              },
+            },
+          },
+        },
         withAllowed(allowed): {
           linters+: {
             settings+: {
@@ -2527,6 +2793,30 @@
         },
       },
       importas: {
+        alias: {
+          withAlias(alias): {
+            linters+: {
+              settings+: {
+                importas+: {
+                  alias+: {
+                    alias: alias,
+                  },
+                },
+              },
+            },
+          },
+          withPkg(pkg): {
+            linters+: {
+              settings+: {
+                importas+: {
+                  alias+: {
+                    pkg: pkg,
+                  },
+                },
+              },
+            },
+          },
+        },
         withAlias(alias): {
           linters+: {
             settings+: {
@@ -2772,6 +3062,30 @@
         },
       },
       misspell: {
+        extraWords: {
+          withCorrection(correction): {
+            linters+: {
+              settings+: {
+                misspell+: {
+                  'extra-words'+: {
+                    correction: correction,
+                  },
+                },
+              },
+            },
+          },
+          withTypo(typo): {
+            linters+: {
+              settings+: {
+                misspell+: {
+                  'extra-words'+: {
+                    typo: typo,
+                  },
+                },
+              },
+            },
+          },
+        },
         withExtraWords(extraWords): {
           linters+: {
             settings+: {
@@ -2922,6 +3236,41 @@
         },
       },
       musttag: {
+        functions: {
+          withArgPos(argPos): {
+            linters+: {
+              settings+: {
+                musttag+: {
+                  functions+: {
+                    'arg-pos': argPos,
+                  },
+                },
+              },
+            },
+          },
+          withName(name): {
+            linters+: {
+              settings+: {
+                musttag+: {
+                  functions+: {
+                    name: name,
+                  },
+                },
+              },
+            },
+          },
+          withTag(tag): {
+            linters+: {
+              settings+: {
+                musttag+: {
+                  functions+: {
+                    tag: tag,
+                  },
+                },
+              },
+            },
+          },
+        },
         withFunctions(functions): {
           linters+: {
             settings+: {
@@ -3402,6 +3751,153 @@
         },
       },
       revive: {
+        directives: {
+          withArguments(arguments): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  directives+: {
+                    arguments: if std.isArray(v=arguments) then arguments else [arguments],
+                  },
+                },
+              },
+            },
+          },
+          withArgumentsMixin(arguments): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  directives+: {
+                    arguments+: if std.isArray(v=arguments) then arguments else [arguments],
+                  },
+                },
+              },
+            },
+          },
+          withExclude(exclude): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  directives+: {
+                    exclude: if std.isArray(v=exclude) then exclude else [exclude],
+                  },
+                },
+              },
+            },
+          },
+          withExcludeMixin(exclude): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  directives+: {
+                    exclude+: if std.isArray(v=exclude) then exclude else [exclude],
+                  },
+                },
+              },
+            },
+          },
+          withName(name): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  directives+: {
+                    name: name,
+                  },
+                },
+              },
+            },
+          },
+          withSeverity(severity): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  directives+: {
+                    severity: severity,
+                  },
+                },
+              },
+            },
+          },
+        },
+        rules: {
+          withArguments(arguments): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  rules+: {
+                    arguments: if std.isArray(v=arguments) then arguments else [arguments],
+                  },
+                },
+              },
+            },
+          },
+          withArgumentsMixin(arguments): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  rules+: {
+                    arguments+: if std.isArray(v=arguments) then arguments else [arguments],
+                  },
+                },
+              },
+            },
+          },
+          withDisabled(disabled): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  rules+: {
+                    disabled: disabled,
+                  },
+                },
+              },
+            },
+          },
+          withExclude(exclude): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  rules+: {
+                    exclude: if std.isArray(v=exclude) then exclude else [exclude],
+                  },
+                },
+              },
+            },
+          },
+          withExcludeMixin(exclude): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  rules+: {
+                    exclude+: if std.isArray(v=exclude) then exclude else [exclude],
+                  },
+                },
+              },
+            },
+          },
+          withName(name): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  rules+: {
+                    name: name,
+                  },
+                },
+              },
+            },
+          },
+          withSeverity(severity): {
+            linters+: {
+              settings+: {
+                revive+: {
+                  rules+: {
+                    severity: severity,
+                  },
+                },
+              },
+            },
+          },
+        },
         withConfidence(confidence): {
           linters+: {
             settings+: {
@@ -3830,6 +4326,75 @@
       tagliatelle: {
         case: {
           extendedRules: {},
+          overrides: {
+            extendedRules: {},
+            rules: {},
+            withIgnore(ignore): {
+              linters+: {
+                settings+: {
+                  tagliatelle+: {
+                    case+: {
+                      overrides+: {
+                        ignore: ignore,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            withIgnoredFields(ignoredFields): {
+              linters+: {
+                settings+: {
+                  tagliatelle+: {
+                    case+: {
+                      overrides+: {
+                        'ignored-fields': if std.isArray(v=ignoredFields) then ignoredFields else [ignoredFields],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            withIgnoredFieldsMixin(ignoredFields): {
+              linters+: {
+                settings+: {
+                  tagliatelle+: {
+                    case+: {
+                      overrides+: {
+                        'ignored-fields'+: if std.isArray(v=ignoredFields) then ignoredFields else [ignoredFields],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            withPkg(pkg): {
+              linters+: {
+                settings+: {
+                  tagliatelle+: {
+                    case+: {
+                      overrides+: {
+                        pkg: pkg,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            withUseFieldName(useFieldName): {
+              linters+: {
+                settings+: {
+                  tagliatelle+: {
+                    case+: {
+                      overrides+: {
+                        'use-field-name': useFieldName,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
           rules: {},
           withIgnoredFields(ignoredFields): {
             linters+: {
@@ -4247,6 +4812,85 @@
         },
       },
       unqueryvet: {
+        customRules: {
+          withAction(action): {
+            linters+: {
+              settings+: {
+                unqueryvet+: {
+                  'custom-rules'+: {
+                    action: action,
+                  },
+                },
+              },
+            },
+          },
+          withId(id): {
+            linters+: {
+              settings+: {
+                unqueryvet+: {
+                  'custom-rules'+: {
+                    id: id,
+                  },
+                },
+              },
+            },
+          },
+          withMessage(message): {
+            linters+: {
+              settings+: {
+                unqueryvet+: {
+                  'custom-rules'+: {
+                    message: message,
+                  },
+                },
+              },
+            },
+          },
+          withPattern(pattern): {
+            linters+: {
+              settings+: {
+                unqueryvet+: {
+                  'custom-rules'+: {
+                    pattern: pattern,
+                  },
+                },
+              },
+            },
+          },
+          withPatterns(patterns): {
+            linters+: {
+              settings+: {
+                unqueryvet+: {
+                  'custom-rules'+: {
+                    patterns: if std.isArray(v=patterns) then patterns else [patterns],
+                  },
+                },
+              },
+            },
+          },
+          withPatternsMixin(patterns): {
+            linters+: {
+              settings+: {
+                unqueryvet+: {
+                  'custom-rules'+: {
+                    patterns+: if std.isArray(v=patterns) then patterns else [patterns],
+                  },
+                },
+              },
+            },
+          },
+          withWhen(when): {
+            linters+: {
+              settings+: {
+                unqueryvet+: {
+                  'custom-rules'+: {
+                    when: when,
+                  },
+                },
+              },
+            },
+          },
+        },
         sqlBuilders: {
           withBun(bun): {
             linters+: {
@@ -5463,6 +6107,57 @@
     },
   },
   severity: {
+    rules: {
+      withLinters(linters): {
+        severity+: {
+          rules+: {
+            linters: if std.isArray(v=linters) then linters else [linters],
+          },
+        },
+      },
+      withLintersMixin(linters): {
+        severity+: {
+          rules+: {
+            linters+: if std.isArray(v=linters) then linters else [linters],
+          },
+        },
+      },
+      withPath(path): {
+        severity+: {
+          rules+: {
+            path: path,
+          },
+        },
+      },
+      withPathExcept(pathExcept): {
+        severity+: {
+          rules+: {
+            'path-except': pathExcept,
+          },
+        },
+      },
+      withSeverity(severity): {
+        severity+: {
+          rules+: {
+            severity: severity,
+          },
+        },
+      },
+      withSource(source): {
+        severity+: {
+          rules+: {
+            source: source,
+          },
+        },
+      },
+      withText(text): {
+        severity+: {
+          rules+: {
+            text: text,
+          },
+        },
+      },
+    },
     withDefault(default): {
       severity+: {
         default: default,

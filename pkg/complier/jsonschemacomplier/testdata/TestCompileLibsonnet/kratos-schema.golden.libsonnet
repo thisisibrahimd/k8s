@@ -70,6 +70,62 @@
     },
   },
   courier: {
+    channels: {
+      requestConfig: {
+        auth: {},
+        headers: {},
+        withAdditionalProperties(additionalProperties): {
+          courier+: {
+            channels+: {
+              request_config+: {
+                additionalProperties: additionalProperties,
+              },
+            },
+          },
+        },
+        withBody(body): {
+          courier+: {
+            channels+: {
+              request_config+: {
+                body: body,
+              },
+            },
+          },
+        },
+        withMethod(method): {
+          courier+: {
+            channels+: {
+              request_config+: {
+                method: method,
+              },
+            },
+          },
+        },
+        withUrl(url): {
+          courier+: {
+            channels+: {
+              request_config+: {
+                url: url,
+              },
+            },
+          },
+        },
+      },
+      withId(id): {
+        courier+: {
+          channels+: {
+            id: id,
+          },
+        },
+      },
+      withType(type): {
+        courier+: {
+          channels+: {
+            type: type,
+          },
+        },
+      },
+    },
     http: {
       requestConfig: {
         auth: {},
@@ -928,6 +984,29 @@
     },
   },
   identity: {
+    schemas: {
+      withId(id): {
+        identity+: {
+          schemas+: {
+            id: id,
+          },
+        },
+      },
+      withSelfserviceSelectable(selfserviceSelectable): {
+        identity+: {
+          schemas+: {
+            selfservice_selectable: selfserviceSelectable,
+          },
+        },
+      },
+      withUrl(url): {
+        identity+: {
+          schemas+: {
+            url: url,
+          },
+        },
+      },
+    },
     withDefaultSchemaId(defaultSchemaId): {
       identity+: {
         default_schema_id: defaultSchemaId,
@@ -2362,6 +2441,60 @@
     methods: {
       b2b: {
         config: {
+          organizations: {
+            withDomains(domains): {
+              selfservice+: {
+                methods+: {
+                  b2b+: {
+                    config+: {
+                      organizations+: {
+                        domains: if std.isArray(v=domains) then domains else [domains],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            withDomainsMixin(domains): {
+              selfservice+: {
+                methods+: {
+                  b2b+: {
+                    config+: {
+                      organizations+: {
+                        domains+: if std.isArray(v=domains) then domains else [domains],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            withId(id): {
+              selfservice+: {
+                methods+: {
+                  b2b+: {
+                    config+: {
+                      organizations+: {
+                        id: id,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            withLabel(label): {
+              selfservice+: {
+                methods+: {
+                  b2b+: {
+                    config+: {
+                      organizations+: {
+                        label: label,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
           withOrganizations(organizations): {
             selfservice+: {
               methods+: {

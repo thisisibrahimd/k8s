@@ -96,6 +96,14 @@ func CompileLibsonnet(s *jsonschema.Schema, name string, curPath []string) build
 			)
 			propTypes = append(propTypes, propTypeMixin)
 
+			// nested helpers for array item properties
+			if p.Items != nil {
+				if itemSchema, ok := p.Items.(*jsonschema.Schema); ok && len(itemSchema.Properties) > 0 {
+					nestedObj := CompileLibsonnet(itemSchema, strcase.LowerCamelCase(pName), newPath)
+					propTypes = append(propTypes, nestedObj)
+				}
+			}
+
 		case "object":
 			propType := CompileLibsonnet(p, strcase.LowerCamelCase(pName), newPath)
 			propTypes = append(propTypes, propType)
