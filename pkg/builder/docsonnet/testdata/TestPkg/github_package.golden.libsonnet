@@ -1,0 +1,1 @@
+d.pkg(name="utils", url="github.com/example/utils", help="Common utilities")

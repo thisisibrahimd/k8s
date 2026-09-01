@@ -1,0 +1,1 @@
+d.pkg(name="k8s", url="https://github.com/kubernetes/k8s-lib", help="Kubernetes library")

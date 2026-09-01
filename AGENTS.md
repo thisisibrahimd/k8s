@@ -10,7 +10,14 @@ make test                              # same
 make libs/<name>                       # generate a library from libs/<name>/config.json
 make libs/<name> VERSIONS="1.27.0"     # regenerate specific versions only
 go build -o k8s-gen .                  # build binary (Makefile expects ./k8s-gen in repo root)
+go install .                           # installs as "k8s" (module name), NOT "k8s-gen" — rename or use "k8s" in commands
 ```
+
+## Library generation
+- `libs/` contains 100+ pre-configured CRD-based libraries, each with its own `config.json`
+- `k8s-gen generate k8s --config libs/<name>/config.json` — run directly (add `--debug` for verbose logging)
+- `k8s-gen generate jsonschema --schema <path> --output <path>` — generate from JSON Schema instead
+- `outputDir` in config.json is relative to the config file's directory, not cwd
 
 ## Golden tests
 ```bash

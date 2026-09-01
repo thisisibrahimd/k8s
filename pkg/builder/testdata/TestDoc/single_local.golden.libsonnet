@@ -1,0 +1,2 @@
+local msg = "hello";
+msg

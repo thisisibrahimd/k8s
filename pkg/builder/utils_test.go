@@ -1,62 +1,73 @@
 package builder
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
-	"os"
-	"os/exec"
-	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/google/go-jsonnet/formatter"
+	"github.com/sebdah/goldie/v2"
 )
 
-func assertRender(t *testing.T, o Type, s string) {
-	got := Doc{Root: o}.String()
-	s = strings.TrimPrefix(s, "\n")
-	s = strings.TrimSuffix(s, "\n")
+// assertRender verifies that the rendered Type matches the golden file.
+// Golden files are stored in ./testdata/<TestName>/<subtest-name>.golden.libsonnet.
+// The rendered output is also validated as syntactically valid Jsonnet.
+func assertRender(t *testing.T, o Type) {
+	t.Helper()
+	output := Doc{Root: o}.String()
+	assertValidJsonnet(t, output)
 
-	diff(t, s, got)
+	g := goldie.New(t,
+		goldie.WithFixtureDir("./testdata"),
+		goldie.WithNameSuffix(".golden.libsonnet"),
+		goldie.WithTestNameForDir(false),
+		goldie.WithSubTestNameForDir(false),
+	)
+	g.Assert(t, t.Name(), []byte(output))
 }
 
-func diff(t *testing.T, want, got string) {
-	dir, err := ioutil.TempDir("", "diff")
-	check(t, err)
-	defer os.RemoveAll(dir)
-
-	check(t, ioutil.WriteFile(filepath.Join(dir, "want"), []byte(want), os.ModePerm))
-	check(t, ioutil.WriteFile(filepath.Join(dir, "got"), []byte(got), os.ModePerm))
-
-	buf := bytes.Buffer{}
-	want = filepath.Join(dir, "want")
-	got = filepath.Join(dir, "got")
-	cmd := exec.Command("bash", "-c", fmt.Sprintf("diff -u -N %s %s | cat -vet | colordiff", want, got))
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = &buf
-	err = cmd.Run()
-
-	// the diff utility exits with `1` if there are differences. We need to not fail there.
-	if exitError, ok := err.(*exec.ExitError); ok && err != nil {
-		if exitError.ExitCode() != 1 {
-			return
-		}
-	}
-
-	out := buf.String()
-	if out == "" {
-		return
-	}
-
-	out = fmt.Sprintf("diff -u -N %s %s\n%s", want, got, out)
-	fmt.Println(out)
-	t.FailNow()
-
-	return
-}
-
-func check(t *testing.T, err error) {
+// assertValidJsonnet verifies that output is syntactically valid Jsonnet
+// by running it through the go-jsonnet formatter, which parses before formatting.
+func assertValidJsonnet(t *testing.T, output string) {
+	t.Helper()
+	_, err := formatter.Format("", output, formatter.DefaultOptions())
 	if err != nil {
-		fmt.Println(err)
-		t.FailNow()
+		t.Errorf("rendered output is not valid Jsonnet: %v\noutput:\n%s", err, output)
 	}
+}
+
+// assertPanics verifies that fn panics and optionally checks the panic message.
+func assertPanics(t *testing.T, name string, fn func(), wantMsg string) {
+	t.Helper()
+	t.Run(name, func(t *testing.T) {
+		defer func() {
+			r := recover()
+			if r == nil {
+				t.Fatal("expected panic, but did not panic")
+			}
+			if wantMsg != "" {
+				msg := fmt.Sprintf("%v", r)
+				if !strings.Contains(msg, wantMsg) {
+					t.Errorf("panic message = %q, want to contain %q", msg, wantMsg)
+				}
+			}
+		}()
+		fn()
+	})
+}
+
+// assertRenderBytes verifies that output matches the golden file.
+// Use when rendering is not via Doc{Root: Type}, e.g. Doc with Locals.
+// Output is validated as syntactically valid Jsonnet.
+func assertRenderBytes(t *testing.T, output string) {
+	t.Helper()
+	assertValidJsonnet(t, output)
+
+	g := goldie.New(t,
+		goldie.WithFixtureDir("./testdata"),
+		goldie.WithNameSuffix(".golden.libsonnet"),
+		goldie.WithTestNameForDir(false),
+		goldie.WithSubTestNameForDir(false),
+	)
+	g.Assert(t, t.Name(), []byte(output))
 }

@@ -1,0 +1,1 @@
+d.obj(help="A widget configuration")

@@ -1,3 +1,8 @@
+// Package docsonnet provides helpers for generating docsonnet documentation.
+//
+// Docsonnet is a documentation format for Jsonnet libraries. This package
+// provides builders to create package, function, and object documentation
+// that can be merged into generated Jsonnet output.
 package docsonnet
 
 import (
@@ -6,10 +11,17 @@ import (
 
 const dPkg = "doc-util/main.libsonnet"
 
+// Import returns a local binding for the docsonnet package.
+//
+// Use this to add the docsonnet import to a generated document.
 func Import() j.Type {
 	return j.Local(j.Import("d", dPkg))
 }
 
+// Args converts name-type pairs into docsonnet argument definitions.
+//
+// Each pair becomes a call to d.arg(name=..., type=d.T...).
+// Panics if the number of arguments is odd.
 func Args(s ...string) []j.Type {
 	if len(s)%2 != 0 {
 		panic("Args expects even number of arguments (pairs)")
@@ -30,6 +42,9 @@ func Args(s ...string) []j.Type {
 	return args
 }
 
+// Func creates a docsonnet function documentation entry.
+//
+// The name is prefixed with "#" to create a hidden field in the output.
 func Func(name, help string, args []j.Type) j.Type {
 	return j.Hidden(j.Call("#"+name, "d.fn", j.Args(
 		j.String("help", help),
@@ -37,12 +52,16 @@ func Func(name, help string, args []j.Type) j.Type {
 	)))
 }
 
+// Obj creates a docsonnet object documentation entry.
+//
+// The name is prefixed with "#" to create a hidden field in the output.
 func Obj(name, help string) j.Type {
 	return j.Hidden(j.Call("#"+name, "d.obj", j.Args(
 		j.String("help", help),
 	)))
 }
 
+// Pkg creates a docsonnet package documentation entry.
 func Pkg(name, url, help string) j.Type {
 	return j.Hidden(j.Call("#", "d.pkg", j.Args(
 		j.String("name", name),

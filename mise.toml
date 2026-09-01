@@ -3,6 +3,3 @@ yq = '4.53.3'
 go-jsonnet = '0.22.0'
 "github:jsonnet-libs/docsonnet" = { version = "0.0.5", asset_pattern = "docsonnet_*_{{ os() | replace(from='macos', to='darwin') }}_{{ arch() | replace(from='x64', to='x86_64') }}.tar.gz" }
 "github:santhosh-tekuri/jsonschema" = { version = "6.0.3", asset_pattern = "jv-*-{{ os() | replace(from='macos', to='darwin') }}-{{ arch() | replace(from='x64', to='x86_64') }}.tar.gz" }
-
-[settings]
-idiomatic_version_file_enable_tools = ["go"]
