@@ -6,6 +6,9 @@
 package docsonnet
 
 import (
+	"fmt"
+	"strings"
+
 	j "github.com/thisisibrahimd/k8s/pkg/builder"
 )
 
@@ -33,13 +36,23 @@ func Args(s ...string) []j.Type {
 			continue
 		}
 
+		typeRef := dTRef(s[i+1])
 		args = append(args, j.Call("", "d.arg", []j.Type{
 			j.String("name", s[i]),
-			j.Ref("type", "d.T."+s[i+1]),
+			j.Ref("type", typeRef),
 		}))
 	}
 
 	return args
+}
+
+// dTRef returns a safe reference to d.T.<type>, using bracket notation
+// when the type is a reserved Jsonnet keyword.
+func dTRef(typeName string) string {
+	if j.IsReservedKeyword(typeName) || strings.ContainsAny(typeName, "-./") || strings.HasPrefix(typeName, "#") {
+		return fmt.Sprintf("d.T['%s']", typeName)
+	}
+	return "d.T." + typeName
 }
 
 // Func creates a docsonnet function documentation entry.
