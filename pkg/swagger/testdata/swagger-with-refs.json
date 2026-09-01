@@ -1,0 +1,99 @@
+{
+  "swagger": "2.0",
+  "info": { "title": "Test Kubernetes API", "version": "v1" },
+  "definitions": {
+    "io.k8s.api.core.v1.Pod": {
+      "type": "object",
+      "description": "Pod is a collection of containers.",
+      "properties": {
+        "metadata": { "$ref": "#/definitions/io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta" },
+        "spec": { "$ref": "#/definitions/io.k8s.api.core.v1.PodSpec" },
+        "status": { "$ref": "#/definitions/io.k8s.api.core.v1.PodStatus" }
+      }
+    },
+    "io.k8s.api.core.v1.PodSpec": {
+      "type": "object",
+      "description": "PodSpec describes how a pod should run.",
+      "properties": {
+        "containers": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/io.k8s.api.core.v1.Container" }
+        },
+        "restartPolicy": { "type": "string" },
+        "nodeName": { "type": "string" }
+      }
+    },
+    "io.k8s.api.core.v1.Container": {
+      "type": "object",
+      "description": "A single application container.",
+      "properties": {
+        "name": { "type": "string" },
+        "image": { "type": "string" },
+        "args": { "type": "array", "items": { "type": "string" } },
+        "ports": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/io.k8s.api.core.v1.ContainerPort" }
+        },
+        "schema": { "$ref": "#/definitions/io.k8s.apiextensions-apiserver.pkg.apis.apiextensions.v1.JSONSchemaProps" }
+      }
+    },
+    "io.k8s.api.core.v1.ContainerPort": {
+      "type": "object",
+      "description": "A network port exposed by a container.",
+      "properties": {
+        "name": { "type": "string" },
+        "containerPort": { "type": "integer" },
+        "protocol": { "type": "string" }
+      }
+    },
+    "io.k8s.api.core.v1.PodStatus": {
+      "type": "object",
+      "description": "PodStatus represents information about the status of a pod.",
+      "properties": {
+        "phase": { "type": "string" },
+        "conditions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/io.k8s.api.core.v1.PodCondition" }
+        }
+      }
+    },
+    "io.k8s.api.core.v1.PodCondition": {
+      "type": "object",
+      "description": "PodCondition contains details for the current pod condition.",
+      "properties": {
+        "type": { "type": "string" },
+        "status": { "type": "string" }
+      }
+    },
+    "io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta": {
+      "type": "object",
+      "description": "ObjectMeta is metadata for Kubernetes objects.",
+      "properties": {
+        "name": { "type": "string" },
+        "namespace": { "type": "string" },
+        "labels": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "annotations": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "io.k8s.apimachinery.pkg.apis.meta.v1.ListMeta": {
+      "type": "object",
+      "description": "ListMeta describes metadata that synthetic resources must have.",
+      "properties": {
+        "remainingItemCount": { "type": "integer" },
+        "resourceVersion": { "type": "string" }
+      }
+    },
+    "io.k8s.apimachinery.pkg.apis.meta.v1.Time": {
+      "type": "object",
+      "description": "Time is a wrapper around time.Time.",
+      "format": "date-time",
+      "type": "string"
+    }
+  }
+}
