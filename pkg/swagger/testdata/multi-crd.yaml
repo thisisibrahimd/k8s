@@ -1,0 +1,50 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: certificates.cert-manager.io
+spec:
+  group: cert-manager.io
+  scope: Namespaced
+  names:
+    plural: certificates
+    kind: Certificate
+  versions:
+    - name: v1
+      schema:
+        openAPIV3Schema:
+          type: object
+          description: Certificate resource.
+          properties:
+            spec:
+              type: object
+              properties:
+                commonName:
+                  type: string
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: issuers.cert-manager.io
+spec:
+  group: cert-manager.io
+  scope: Namespaced
+  names:
+    plural: issuers
+    kind: Issuer
+  versions:
+    - name: v1
+      schema:
+        openAPIV3Schema:
+          type: object
+          description: Issuer resource.
+          properties:
+            spec:
+              type: object
+              properties:
+                selfSigned:
+                  type: object
+                ca:
+                  type: object
+                  properties:
+                    secretName:
+                      type: string

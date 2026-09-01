@@ -6,7 +6,7 @@ libs/*:
 
 .PHONY: update-golden-test-data
 update-golden-test-data:
-	cd pkg/complier/jsonschemacomplier && go test -update
+	cd pkg/compiler/jsonschemacompiler && go test -update
 
 .PHONY: test
 test:

@@ -9,9 +9,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/google/go-jsonnet/formatter"
-	"github.com/thisisibrahimd/k8s/pkg/complier/jsonschemacomplier"
+	"github.com/thisisibrahimd/k8s/pkg/compiler/jsonschemacompiler"
 	"github.com/thisisibrahimd/k8s/pkg/config"
+	"github.com/thisisibrahimd/k8s/pkg/format"
 	"github.com/thisisibrahimd/k8s/pkg/model"
 	"github.com/thisisibrahimd/k8s/pkg/swagger"
 	"github.com/thisisibrahimd/k8s/pkg/targetgenerator"
@@ -193,7 +193,7 @@ func newJsonSchemaGenerateCommand() *cli.Command {
 		comp := jsonschema.NewCompiler()
 
 		// setup loader for local file and remote urls
-		l, _ := jsonschemacomplier.NewLoader(false, "")
+		l, _ := jsonschemacompiler.NewLoader(false, "")
 		comp.UseLoader(l)
 		slog.Debug("configured loader based on schema")
 
@@ -205,11 +205,11 @@ func newJsonSchemaGenerateCommand() *cli.Command {
 		slog.Debug("complied schema", slog.Int("version", sch.DraftVersion))
 
 		// compile jsonschema into libsonnet
-		libsonnetFile := jsonschemacomplier.CompileLibsonnet(sch, "schema", []string{})
+		libsonnetFile := jsonschemacompiler.CompileLibsonnet(sch, "schema", []string{})
 		slog.Debug("generated libsonnet files")
 
 		// format libsonnet file
-		formattedLibsonnetFile, err := formatter.Format("", libsonnetFile.String(), formatter.DefaultOptions())
+		formattedLibsonnetFile, err := format.Format("", libsonnetFile.String())
 		if err != nil {
 			return err
 		}

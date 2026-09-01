@@ -135,13 +135,12 @@ func fnResult(f model.Modifier, adder bool) j.Type {
 func mapFnResult(f model.Modifier) j.Type {
 	elems := strings.Split(f.Target, ".")
 	fieldName := elems[len(elems)-1]
-	superRef := superRefString(fieldName)
 	ret := reduceReverse(elems, func(i int, s string, o j.Type) j.Type {
 		switch i {
 		case 0:
 			return j.Call(s, "std.map", j.Args(
 				j.CallArgFrom(j.Ref("", "f")),
-				j.CallArgFrom(j.Ref("", superRef)),
+				j.CallArgFrom(j.SuperRef(fieldName)),
 			))
 		case 1:
 			return j.ConciseObject(s, o)
@@ -158,12 +157,11 @@ func mapFnResult(f model.Modifier) j.Type {
 func mapByNameFnResult(f model.Modifier) j.Type {
 	elems := strings.Split(f.Target, ".")
 	fieldName := elems[len(elems)-1]
-	superRef := superRefString(fieldName)
 	ret := reduceReverse(elems, func(i int, s string, o j.Type) j.Type {
 		switch i {
 		case 0:
 			return j.ArrayComprehension(s, "c", "name",
-				j.Ref("", superRef),
+				j.SuperRef(fieldName),
 				j.Ref("", "name"),
 				j.Call("", "transformFunc", j.Args(j.CallArgFrom(j.Ref("", "c")))),
 			)
@@ -177,13 +175,6 @@ func mapByNameFnResult(f model.Modifier) j.Type {
 		ret = j.Merge(ret)
 	}
 	return ret
-}
-
-func superRefString(fieldName string) string {
-	if strings.ContainsAny(fieldName, "-./") || strings.HasPrefix(fieldName, "#") {
-		return fmt.Sprintf("super['%s']", fieldName)
-	}
-	return "super." + fieldName
 }
 
 // reduceReverse calls f for each in arr in reverse order.

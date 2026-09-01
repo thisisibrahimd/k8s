@@ -1,0 +1,15 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: minimal.example.com
+spec:
+  group: example.com
+  scope: Cluster
+  names:
+    plural: minimals
+    kind: Minimal
+  versions:
+    - name: v1
+      schema:
+        openAPIV3Schema:
+          type: object

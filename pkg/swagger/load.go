@@ -10,10 +10,16 @@ import (
 	"resty.dev/v3"
 )
 
+// Loader parses raw spec data into Definitions.
 type Loader interface {
 	Load([]byte) (Definitions, error)
 }
 
+// Load reads a spec from a file path or URL and parses it using the given loader.
+//
+// If uri has a scheme (http, https), it is fetched over HTTP with validation
+// for 2xx status codes. Otherwise it is read from the local filesystem.
+// Returns an error if the URI cannot be read or the loader fails.
 func Load(loader Loader, uri string) (Definitions, error) {
 	var data []byte
 	var err error

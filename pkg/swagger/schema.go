@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-// swagger types
+// Type represents a JSON Schema type string.
 type Type string
 
 const (
@@ -15,7 +15,10 @@ const (
 	TypeArray  Type = "array"
 )
 
-// Schema is a general object definition
+// Schema represents a parsed JSON Schema or OpenAPI definition,
+// capturing type, description, nested properties, array items,
+// $ref references (raw and resolved), Kubernetes scope, and
+// vendor extensions like x-kubernetes-group-version-kind.
 type Schema struct {
 	// general
 	Type Type   `json:"type"`
@@ -37,12 +40,16 @@ type Schema struct {
 	XGvk []XGvk `json:"x-kubernetes-group-version-kind"`
 }
 
+// XGvk represents a Kubernetes group/version/kind tuple from the
+// x-kubernetes-group-version-kind vendor extension.
 type XGvk struct {
 	Group   string
 	Kind    string
 	Version string
 }
 
+// Ref returns the resolved reference name. If DollarRef is set, it
+// strips the "#/definitions/" prefix. Otherwise returns ResolvedRef.
 func (s Schema) Ref() string {
 	if s.DollarRef == nil {
 		return s.ResolvedRef
@@ -50,6 +57,10 @@ func (s Schema) Ref() string {
 	return strings.TrimPrefix(*s.DollarRef, "#/definitions/")
 }
 
+// GroupVersionKind returns the most specific x-kubernetes-group-version-kind
+// entry from the schema. When multiple entries exist, it prefers entries
+// with non-empty Group, Version, and Kind fields over empty ones.
+// Returns (nil, false) if no XGVK entries exist.
 func (s Schema) GroupVersionKind() (*XGvk, bool) {
 	if len(s.XGvk) == 0 {
 		return nil, false

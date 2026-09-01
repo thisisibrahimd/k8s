@@ -15,10 +15,19 @@ import (
 //go:embed objectmeta.json
 var objectmeta []byte
 
+// CRDLoader parses Kubernetes CustomResourceDefinition YAML manifests
+// into Definitions. Automatically injects ObjectMeta definitions into
+// top-level CRD properties.
 type CRDLoader struct {
 	objectMetaDefinitions *Schema
 }
 
+// Load parses one or more CRD YAML documents (multi-document supported via ---)
+// and returns a Definitions map keyed by reversed-group.version.Kind
+// (e.g. "io.cert-manager.v1.Certificate").
+//
+// For each CRD version, the OpenAPI v3 schema is converted to a Schema tree
+// with nested properties and array items recursively processed.
 func (c *CRDLoader) Load(manifest []byte) (Definitions, error) {
 	crds, err := c.splitYAML(manifest)
 	if err != nil {
