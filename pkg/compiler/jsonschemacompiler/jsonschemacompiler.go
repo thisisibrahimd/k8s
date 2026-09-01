@@ -2,7 +2,6 @@ package jsonschemacompiler
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/thisisibrahimd/k8s/pkg/builder"
 	"github.com/thisisibrahimd/k8s/pkg/render"
@@ -16,14 +15,6 @@ func genAdditiveObjWrapper(in builder.Type, path []string) builder.Type {
 	}
 
 	return builder.Merge(builder.Object(path[0], genAdditiveObjWrapper(in, path[1:])))
-}
-
-// superRef generates a proper super.field reference, using bracket notation for special names
-func superRef(fieldName string) builder.Type {
-	if strings.ContainsAny(fieldName, "-./") || strings.HasPrefix(fieldName, "#") {
-		return builder.Ref("", fmt.Sprintf("super['%s']", fieldName))
-	}
-	return builder.Ref("", "super."+fieldName)
 }
 
 func CompileLibsonnet(s *jsonschema.Schema, name string, curPath []string) builder.Type {
@@ -117,7 +108,7 @@ func CompileLibsonnet(s *jsonschema.Schema, name string, curPath []string) build
 			mapPath := append(append([]string{}, curPath...), pName)
 			mapInner := builder.Call(pName, "std.map", builder.Args(
 				builder.CallArgFrom(builder.Ref("", "f")),
-				builder.CallArgFrom(superRef(pName)),
+				builder.CallArgFrom(builder.SuperRef(pName)),
 			))
 			mapWrapped := genAdditiveObjWrapper(mapInner, mapPath[:len(mapPath)-1])
 			if len(mapPath) > 1 {
@@ -137,7 +128,7 @@ func CompileLibsonnet(s *jsonschema.Schema, name string, curPath []string) build
 			}
 			if hasName {
 				comprehension := builder.ArrayComprehension(pName, "c", "name",
-					superRef(pName),
+					builder.SuperRef(pName),
 					builder.Ref("", "name"),
 					builder.Call("", "transformFunc", builder.Args(builder.CallArgFrom(builder.Ref("", "c")))),
 				)

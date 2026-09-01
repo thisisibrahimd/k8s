@@ -1,5 +1,10 @@
 package builder
 
+import (
+	"fmt"
+	"strings"
+)
+
 // RefType represents a reference to another value in Jsonnet.
 //
 // String returns the target identifier verbatim — no quoting, no transformation.
@@ -19,4 +24,13 @@ func Ref(name, to string) RefType {
 // String returns the target identifier verbatim.
 func (r RefType) String() string {
 	return r.to
+}
+
+// SuperRef creates a reference to super[fieldName], using bracket notation
+// when fieldName is a reserved keyword or contains special characters.
+func SuperRef(fieldName string) RefType {
+	if IsReservedKeyword(fieldName) || strings.ContainsAny(fieldName, "-./") || strings.HasPrefix(fieldName, "#") {
+		return Ref("", fmt.Sprintf("super['%s']", fieldName))
+	}
+	return Ref("", "super."+fieldName)
 }
