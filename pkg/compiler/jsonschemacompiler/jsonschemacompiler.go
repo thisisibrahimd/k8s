@@ -1,4 +1,4 @@
-package jsonschemacomplier
+package jsonschemacompiler
 
 import (
 	"fmt"

@@ -1,10 +1,10 @@
-package jsonschemacomplier_test
+package jsonschemacompiler_test
 
 import (
 	"testing"
 
 	"github.com/google/go-jsonnet/formatter"
-	"github.com/thisisibrahimd/k8s/pkg/complier/jsonschemacomplier"
+	"github.com/thisisibrahimd/k8s/pkg/compiler/jsonschemacompiler"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/sebdah/goldie/v2"
 )
@@ -25,7 +25,7 @@ func verifyLibsonnetFileMatch(t *testing.T, v []byte) {
 func TestCompileLibsonnet(t *testing.T) {
 	// create jsonschema compiler
 	comp := jsonschema.NewCompiler()
-	l, _ := jsonschemacomplier.NewLoader(false, "")
+	l, _ := jsonschemacompiler.NewLoader(false, "")
 	comp.UseLoader(l)
 
 	// setup jsonnet formatter options
@@ -69,7 +69,7 @@ func TestCompileLibsonnet(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// compile jsonschema into libsonnet
-			got := jsonschemacomplier.CompileLibsonnet(tt.schema, "schema", []string{})
+			got := jsonschemacompiler.CompileLibsonnet(tt.schema, "schema", []string{})
 
 			// format the generated libsonnet file
 			formattedLibsonnet, err := formatter.Format("", got.String(), formatOpts)

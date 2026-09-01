@@ -22,17 +22,18 @@ go install .                           # installs as "k8s" (module name), NOT "k
 ## Golden tests
 ```bash
 make update-golden-test-data           # regenerate all golden .libsonnet fixtures
-go test ./pkg/complier/jsonschemacomplier/... -update   # same, targeted
+go test ./pkg/compiler/jsonschemacompiler/... -update   # same, targeted
 ```
-Golden files live in `pkg/complier/jsonschemacomplier/testdata/TestCompileLibsonnet/*.golden.libsonnet`.
+Golden files live in `pkg/compiler/jsonschemacompiler/testdata/TestCompileLibsonnet/*.golden.libsonnet`.
 
 ## Code generation pipeline
 ```
 config.json → specGenerator (optional) → specs[] → model.Load() → render → writer (disk)
 ```
 - **OpenAPI/CRD path**: `pkg/model/modifiers.go` (model) → `pkg/render/modifiers.go` (render)
-- **JSON Schema path**: `pkg/complier/jsonschemacomplier/jsonschemacomplier.go` (standalone compiler)
+- **JSON Schema path**: `pkg/compiler/jsonschemacompiler/jsonschemacompiler.go` (standalone compiler)
 - **Builder**: `pkg/builder/` — generates Jsonnet AST from Go (Func, Object, Call, List, etc.)
+- **CLI entry**: `main.go` → `cmd/k8s-gen/root.go` + `generate.go` (urfave/cli/v3)
 
 ## Modifiers model
 For each field, the generator creates:
@@ -47,10 +48,11 @@ For each field, the generator creates:
 - **`extensions/`** — NOT auto-applied. User must import manually. Declare via `"extensionDir": "extensions/core"`.
 
 ## Toolchain
-- Go 1.26+ (see `go.mod`)
+- Go 1.26.6 (exact, see `go.mod`)
 - `go-jsonnet` 0.22.0 for running generated libsonnet
 - Managed via `mise.toml` — run `mise install` if tools are missing
-- CI: `make test` on PR/push to main (`.github/workflows/build.yml`)
+- CI: `make test` only — no lint or typecheck step
+- Release: push `v*` tag → GoReleaser → GitHub releases + GHCR Docker images (`.github/workflows/release.yml`)
 
 ## Gotchas
 - Binary installs as `k8s` (module path), not `k8s-gen`. Use `go build -o k8s-gen .` or rename.
