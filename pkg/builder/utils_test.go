@@ -2,11 +2,13 @@ package builder
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
-	"github.com/google/go-jsonnet/formatter"
 	"github.com/sebdah/goldie/v2"
+	"github.com/thisisibrahimd/k8s/pkg/format"
 )
 
 // assertRender verifies that the rendered Type matches the golden file.
@@ -15,7 +17,7 @@ import (
 func assertRender(t *testing.T, o Type) {
 	t.Helper()
 	output := Doc{Root: o}.String()
-	assertValidJsonnet(t, output)
+	formatDebug(t, t.Name(), output)
 
 	g := goldie.New(t,
 		goldie.WithFixtureDir("./testdata"),
@@ -30,9 +32,18 @@ func assertRender(t *testing.T, o Type) {
 // by running it through the go-jsonnet formatter, which parses before formatting.
 func assertValidJsonnet(t *testing.T, output string) {
 	t.Helper()
-	_, err := formatter.Format("", output, formatter.DefaultOptions())
+	formatDebug(t, t.Name(), output)
+}
+
+// formatDebug formats content and, on failure, writes the raw output to a temp
+// file for inspection. Test helper only — not exposed to end users.
+func formatDebug(t *testing.T, path string, content string) {
+	t.Helper()
+	_, err := format.Format(path, content)
 	if err != nil {
-		t.Errorf("rendered output is not valid Jsonnet: %v\noutput:\n%s", err, output)
+		debugPath := filepath.Join(t.TempDir(), filepath.Base(path)+".libsonnet")
+		os.WriteFile(debugPath, []byte(content), 0o644)
+		t.Fatalf("%s: %v\nraw content dumped to: %s", path, err, debugPath)
 	}
 }
 

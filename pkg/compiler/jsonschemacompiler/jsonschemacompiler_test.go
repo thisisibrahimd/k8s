@@ -1,10 +1,12 @@
 package jsonschemacompiler_test
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
-	"github.com/google/go-jsonnet/formatter"
 	"github.com/thisisibrahimd/k8s/pkg/compiler/jsonschemacompiler"
+	"github.com/thisisibrahimd/k8s/pkg/format"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/sebdah/goldie/v2"
 )
@@ -27,9 +29,6 @@ func TestCompileLibsonnet(t *testing.T) {
 	comp := jsonschema.NewCompiler()
 	l, _ := jsonschemacompiler.NewLoader(false, "")
 	comp.UseLoader(l)
-
-	// setup jsonnet formatter options
-	formatOpts := formatter.DefaultOptions()
 
 	tests := []struct {
 		name       string // description of this test case
@@ -72,16 +71,23 @@ func TestCompileLibsonnet(t *testing.T) {
 			got := jsonschemacompiler.CompileLibsonnet(tt.schema, "schema", []string{})
 
 			// format the generated libsonnet file
-			formattedLibsonnet, err := formatter.Format("", got.String(), formatOpts)
-			if err != nil {
-				t.Errorf("error formatting compiled libsonnet: %v", err)
-			}
+			formattedLibsonnet := formatDebug(t, tt.name, got.String())
 
 			// compare
 			verifyLibsonnetFileMatch(t, []byte(formattedLibsonnet))
-			// if formattedLibsonnet != tt.want {
-			// 	t.Errorf("error compiling jsonschema to libsonnet. got = %v, want %v", formattedLibsonnet, tt.want)
-			// }
 		})
 	}
+}
+
+// formatDebug formats content and, on failure, writes the raw output to a temp
+// file for inspection. Test helper only — not exposed to end users.
+func formatDebug(t *testing.T, path string, content string) string {
+	t.Helper()
+	formatted, err := format.Format(path, content)
+	if err != nil {
+		debugPath := filepath.Join(t.TempDir(), filepath.Base(path)+".libsonnet")
+		os.WriteFile(debugPath, []byte(content), 0o644)
+		t.Fatalf("%s: %v\nraw content dumped to: %s", path, err, debugPath)
+	}
+	return formatted
 }

@@ -9,9 +9,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/google/go-jsonnet/formatter"
 	"github.com/thisisibrahimd/k8s/pkg/compiler/jsonschemacompiler"
 	"github.com/thisisibrahimd/k8s/pkg/config"
+	"github.com/thisisibrahimd/k8s/pkg/format"
 	"github.com/thisisibrahimd/k8s/pkg/model"
 	"github.com/thisisibrahimd/k8s/pkg/swagger"
 	"github.com/thisisibrahimd/k8s/pkg/targetgenerator"
@@ -209,7 +209,7 @@ func newJsonSchemaGenerateCommand() *cli.Command {
 		slog.Debug("generated libsonnet files")
 
 		// format libsonnet file
-		formattedLibsonnetFile, err := formatter.Format("", libsonnetFile.String(), formatter.DefaultOptions())
+		formattedLibsonnetFile, err := format.Format("", libsonnetFile.String())
 		if err != nil {
 			return err
 		}

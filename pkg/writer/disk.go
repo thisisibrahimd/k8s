@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/google/go-jsonnet/formatter"
 	"github.com/thisisibrahimd/k8s/pkg/config"
+	"github.com/thisisibrahimd/k8s/pkg/format"
 	"github.com/thisisibrahimd/k8s/pkg/model"
 	"github.com/thisisibrahimd/k8s/pkg/render"
 	"github.com/mdobak/go-xerrors"
@@ -83,7 +83,7 @@ func (w *DiskWriter) Render(dir string, groups model.Groups, spec config.Target,
 }
 
 func (w *DiskWriter) writeJsonnet(to, data string) error {
-	s, err := formatter.Format("", data, formatter.DefaultOptions())
+	s, err := format.Format(to, data)
 	if err != nil {
 		return xerrors.Newf("failed to write jsonnet file: %w", err)
 	}
@@ -119,7 +119,7 @@ func (w *DiskWriter) copyDirLibsonnet(dir, to string) ([]string, error) {
 		// generated files so the resulting library is consistently
 		// formatted regardless of how the source happens to be checked
 		// in. See writeJsonnet for the parallel call.
-		formatted, err := formatter.Format(a, string(content), formatter.DefaultOptions())
+		formatted, err := format.Format(a, string(content))
 		if err != nil {
 			return nil, xerrors.New("failed to format file %s: %w", a, err)
 		}
