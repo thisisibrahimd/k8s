@@ -1,0 +1,1 @@
+d.obj(help="Kubernetes Deployment resource")

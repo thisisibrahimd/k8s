@@ -5,12 +5,16 @@ import (
 	"strings"
 )
 
-const (
-	SeparatorLong    = ",\n"
-	SeparatorConcise = ", "
-)
+// SeparatorLong is the separator for multi-line object fields.
+const SeparatorLong = ",\n"
 
-// Objects (dicts)
+// SeparatorConcise is the separator for single-line object fields.
+const SeparatorConcise = ", "
+
+// ObjectType represents a Jsonnet object (dictionary).
+//
+// Children are keyed by [Type.Name]; duplicate keys cause a panic.
+// Keys containing -, ., /, starting with #, or reserved keywords are auto-quoted.
 type ObjectType struct {
 	named
 	order    []string
@@ -18,6 +22,9 @@ type ObjectType struct {
 	concise  bool
 }
 
+// Object creates a Jsonnet object with the given children.
+//
+// Panics if two children have the same [Type.Name].
 func Object(name string, children ...Type) ObjectType {
 	c := make(map[string]Type)
 	order := make([]string, len(children))
@@ -40,10 +47,14 @@ func Object(name string, children ...Type) ObjectType {
 	}
 }
 
+// escapeKey returns a Jsonnet-safe identifier for s.
+//
+// Reserved keywords, strings starting with #, and strings containing -, ., or /
+// are wrapped in single quotes. All other strings are returned unchanged.
 func escapeKey(s string) string {
 	switch s {
 	case "assert", "else", "error", "false", "for", "function", "if",
-		"import", "importstr", "in", "local", "null", "tailstrict", 
+		"import", "importstr", "in", "local", "null", "tailstrict",
 		"then", "self", "super", "true":
 		return fmt.Sprintf(`'%s'`, s)
 	default:
@@ -57,12 +68,18 @@ func escapeKey(s string) string {
 	}
 }
 
+// ConciseObject creates a Jsonnet object rendered on a single line.
+//
+// Fields are separated by ", " instead of newlines.
 func ConciseObject(name string, children ...Type) ObjectType {
 	o := Object(name, children...)
 	o.concise = true
 	return o
 }
 
+// String renders the object with each field on its own line.
+//
+// Returns "{}" for empty objects.
 func (o ObjectType) String() string {
 	if len(o.children) == 0 {
 		return "{}"
@@ -75,11 +92,13 @@ func (o ObjectType) String() string {
 	return fmt.Sprintf("{\n%s\n}", indent(s))
 }
 
+// ConciseString renders the object on a single line.
 func (o ObjectType) ConciseString() string {
 	s := printChildren(o.children, o.order, SeparatorConcise)
 	return fmt.Sprintf("{ %s }", strings.TrimSuffix(s, ","))
 }
 
+// printChildren renders object children with the given separator.
 func printChildren(children map[string]Type, order []string, s string) string {
 	j := ""
 	for _, name := range order {

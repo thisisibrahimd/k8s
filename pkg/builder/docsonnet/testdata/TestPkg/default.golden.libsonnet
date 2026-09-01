@@ -1,0 +1,1 @@
+d.pkg(name="mylib", url="https://example.com/lib", help="My library docs")

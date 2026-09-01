@@ -1,0 +1,3 @@
+{
+  m: (importstr 'foo.txt')
+}

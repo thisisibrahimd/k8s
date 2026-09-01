@@ -1,0 +1,1 @@
+d.fn(help="Configure a service", args=[d.arg(name="name", type=d.T.String), d.arg(name="port", type=d.T.Int), d.arg(name="tls", type=d.T.Bool)])
