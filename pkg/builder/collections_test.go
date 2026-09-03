@@ -54,7 +54,7 @@ func TestList(t *testing.T) {
 				t.Errorf("List(%q, ...).Name() = %q, want %q", tt.n, got, tt.wantName)
 			}
 			o := Object("", l)
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }
@@ -65,7 +65,7 @@ func TestArrayComprehension(t *testing.T) {
 		c    ArrayComprehensionType
 	}{
 		{
-			name: "basic",
+			name: "testarraycomprehension-basic",
 			c: ArrayComprehension("x", "c", "name",
 				Ref("", "super.containers"),
 				Ref("", "name"),
@@ -73,7 +73,7 @@ func TestArrayComprehension(t *testing.T) {
 			),
 		},
 		{
-			name: "simple match value",
+			name: "testarraycomprehension-simple match value",
 			c: ArrayComprehension("x", "c", "name",
 				Ref("", "super.x"),
 				String("", "foo"),
@@ -81,7 +81,7 @@ func TestArrayComprehension(t *testing.T) {
 			),
 		},
 		{
-			name: "nested source",
+			name: "testarraycomprehension-nested source",
 			c: ArrayComprehension("x", "c", "name",
 				Ref("", "super.spec.containers"),
 				Ref("", "name"),
@@ -89,7 +89,7 @@ func TestArrayComprehension(t *testing.T) {
 			),
 		},
 		{
-			name: "different field",
+			name: "testarraycomprehension-different field",
 			c: ArrayComprehension("x", "item", "key",
 				Ref("", "super.y"),
 				Ref("", "target"),
@@ -97,7 +97,7 @@ func TestArrayComprehension(t *testing.T) {
 			),
 		},
 		{
-			name: "with int match",
+			name: "testarraycomprehension-with int match",
 			c: ArrayComprehension("x", "c", "name",
 				Ref("", "super.x"),
 				Int("", 5),
@@ -105,7 +105,7 @@ func TestArrayComprehension(t *testing.T) {
 			),
 		},
 		{
-			name: "real world modifiers pattern",
+			name: "testarraycomprehension-real world modifiers pattern",
 			c: ArrayComprehension("containers", "c", "name",
 				Ref("", "super.containers"),
 				Ref("", "name"),
@@ -117,7 +117,7 @@ func TestArrayComprehension(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			o := Object("", Ref("result", tt.c.String()))
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }

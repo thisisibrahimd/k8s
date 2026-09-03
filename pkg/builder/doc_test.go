@@ -14,14 +14,14 @@ func TestDoc(t *testing.T) {
 			root:   Object("simple", String("key", "value")),
 		},
 		{
-			name: "single local",
+			name: "testdoc-single local",
 			locals: []LocalType{
 				Local(String("msg", "hello")),
 			},
 			root: Ref("greeting", "msg"),
 		},
 		{
-			name: "multiple locals",
+			name: "testdoc-multiple locals",
 			locals: []LocalType{
 				Local(String("name", "app")),
 				Local(Int("replicas", 3)),
@@ -32,7 +32,7 @@ func TestDoc(t *testing.T) {
 			),
 		},
 		{
-			name: "local with object value",
+			name: "testdoc-local with object value",
 			locals: []LocalType{
 				Local(Object("config",
 					String("host", "localhost"),
@@ -42,14 +42,14 @@ func TestDoc(t *testing.T) {
 			root: Ref("cfg", "config"),
 		},
 		{
-			name: "local with import",
+			name: "testdoc-local with import",
 			locals: []LocalType{
 				Local(Import("lib", "foo.libsonnet")),
 			},
 			root: Call("init", "lib.new", Args(String("name", "app"))),
 		},
 		{
-			name: "local with func",
+			name: "testdoc-local with func",
 			locals: []LocalType{
 				Local(Func("build",
 					Args(String("name", "")),
@@ -59,14 +59,14 @@ func TestDoc(t *testing.T) {
 			root: Call("result", "build", Args(String("name", "myapp"))),
 		},
 		{
-			name: "local with list",
+			name: "testdoc-local with list",
 			locals: []LocalType{
 				Local(List("items", Int("", 1), Int("", 2), Int("", 3))),
 			},
 			root: Ref("nums", "items"),
 		},
 		{
-			name: "empty root",
+			name: "testdoc-empty root",
 			locals: []LocalType{
 				Local(String("unused", "value")),
 			},
@@ -80,7 +80,7 @@ func TestDoc(t *testing.T) {
 				Locals: tt.locals,
 				Root:   tt.root,
 			}
-			assertRenderBytes(t, doc.String())
+			assertRenderBytes(t, tt.name, doc.String())
 		})
 	}
 }

@@ -12,12 +12,13 @@ import (
 )
 
 // assertRender verifies that the rendered Type matches the golden file.
-// Golden files are stored in ./testdata/<TestName>/<subtest-name>.golden.libsonnet.
+// Golden files are stored in ./testdata/<name>.golden.libsonnet.
+// Spaces in name are replaced with underscores for valid filenames.
 // The rendered output is also validated as syntactically valid Jsonnet.
-func assertRender(t *testing.T, o Type) {
+func assertRender(t *testing.T, name string, o Type) {
 	t.Helper()
 	output := Doc{Root: o}.String()
-	formatDebug(t, t.Name(), output)
+	formatDebug(t, name, output)
 
 	g := goldie.New(t,
 		goldie.WithFixtureDir("./testdata"),
@@ -25,14 +26,14 @@ func assertRender(t *testing.T, o Type) {
 		goldie.WithTestNameForDir(false),
 		goldie.WithSubTestNameForDir(false),
 	)
-	g.Assert(t, t.Name(), []byte(output))
+	g.Assert(t, strings.ReplaceAll(name, " ", "_"), []byte(output))
 }
 
 // assertValidJsonnet verifies that output is syntactically valid Jsonnet
 // by running it through the go-jsonnet formatter, which parses before formatting.
-func assertValidJsonnet(t *testing.T, output string) {
+func assertValidJsonnet(t *testing.T, name string, output string) {
 	t.Helper()
-	formatDebug(t, t.Name(), output)
+	formatDebug(t, name, output)
 }
 
 // formatDebug formats content and, on failure, writes the raw output to a temp
@@ -69,10 +70,11 @@ func assertPanics(t *testing.T, name string, fn func(), wantMsg string) {
 
 // assertRenderBytes verifies that output matches the golden file.
 // Use when rendering is not via Doc{Root: Type}, e.g. Doc with Locals.
+// Spaces in name are replaced with underscores for valid filenames.
 // Output is validated as syntactically valid Jsonnet.
-func assertRenderBytes(t *testing.T, output string) {
+func assertRenderBytes(t *testing.T, name string, output string) {
 	t.Helper()
-	assertValidJsonnet(t, output)
+	assertValidJsonnet(t, name, output)
 
 	g := goldie.New(t,
 		goldie.WithFixtureDir("./testdata"),
@@ -80,5 +82,5 @@ func assertRenderBytes(t *testing.T, output string) {
 		goldie.WithTestNameForDir(false),
 		goldie.WithSubTestNameForDir(false),
 	)
-	g.Assert(t, t.Name(), []byte(output))
+	g.Assert(t, strings.ReplaceAll(name, " ", "_"), []byte(output))
 }

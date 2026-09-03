@@ -58,7 +58,7 @@ func TestCallChain(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			chain := CallChain(tt.n, tt.calls...)
 			o := Object("", String("call", chain.String()))
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }

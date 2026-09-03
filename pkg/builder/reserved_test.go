@@ -75,7 +75,7 @@ func TestSafeString(t *testing.T) {
 					),
 				),
 			)
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }

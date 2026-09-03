@@ -335,6 +335,14 @@ base + lib.mapTags(function(t) 'release-' + t)
 
 - Schema composition with `anyOf`, `oneOf`, or external `$ref` is limited.
 - Empty object properties (`{}`) may appear when the schema declares an object but provides no properties.
+- Nested map helpers (`mapXyz` inside a `mapXyz` transform) are not supported. The helpers use `super` which only works in object merge contexts. For nested arrays, use `std.map` directly:
+  ```jsonnet
+  lib.mapContainers(function(c)
+    c {
+      ports: std.map(function(p) p { containerPort: 8080 }, super.ports),
+    }
+  )
+  ```
 
 
 ## Customizing

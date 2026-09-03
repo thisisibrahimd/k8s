@@ -9,8 +9,8 @@ import (
 )
 
 // assertRender verifies that the rendered Type matches the golden file.
-// Golden files are stored in ./testdata/<TestName>/<subtest-name>.golden.libsonnet.
-func assertRender(t *testing.T, o j.Type) {
+// Spaces in name are replaced with underscores for valid filenames.
+func assertRender(t *testing.T, name string, o j.Type) {
 	t.Helper()
 	g := goldie.New(t,
 		goldie.WithFixtureDir("./testdata"),
@@ -18,7 +18,7 @@ func assertRender(t *testing.T, o j.Type) {
 		goldie.WithTestNameForDir(false),
 		goldie.WithSubTestNameForDir(false),
 	)
-	g.Assert(t, t.Name(), []byte(j.Doc{Root: o}.String()))
+	g.Assert(t, strings.ReplaceAll(name, " ", "_"), []byte(j.Doc{Root: o}.String()))
 }
 
 func TestImport(t *testing.T) {
@@ -27,29 +27,29 @@ func TestImport(t *testing.T) {
 		fn   func() j.Type
 	}{
 		{
-			name: "default",
+			name: "testimport-default",
 			fn:   Import,
 		},
 		{
-			name: "custom path",
+			name: "testimport-custom path",
 			fn: func() j.Type {
 				return j.Import("util", "doc-util/main.libsonnet")
 			},
 		},
 		{
-			name: "relative path",
+			name: "testimport-relative path",
 			fn: func() j.Type {
 				return j.Import("util", "../doc-util/main.libsonnet")
 			},
 		},
 		{
-			name: "github path",
+			name: "testimport-github path",
 			fn: func() j.Type {
 				return j.Import("util", "github.com/example/doc-util/main.libsonnet")
 			},
 		},
 		{
-			name: "importstr",
+			name: "testimport-importstr",
 			fn: func() j.Type {
 				return j.ImportStr("raw", "doc-util/README.md")
 			},
@@ -59,7 +59,7 @@ func TestImport(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.fn()
-			assertRender(t, got)
+			assertRender(t, tt.name, got)
 		})
 	}
 }
@@ -219,7 +219,7 @@ func TestFunc(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Func(tt.fnName, tt.help, Args(tt.args...))
-			assertRender(t, got)
+			assertRender(t, tt.name, got)
 		})
 	}
 }
@@ -231,27 +231,27 @@ func TestObj(t *testing.T) {
 		help string
 	}{
 		{
-			name: "simple",
+			name: "testobj-simple",
 			obj:  "Widget",
 			help: "A widget configuration",
 		},
 		{
-			name: "multi word",
+			name: "testobj-multi word",
 			obj:  "MyService",
 			help: "Service definition",
 		},
 		{
-			name: "empty help",
+			name: "testobj-empty help",
 			obj:  "Config",
 			help: "",
 		},
 		{
-			name: "api object",
+			name: "testobj-api object",
 			obj:  "Deployment",
 			help: "Kubernetes Deployment resource",
 		},
 		{
-			name: "nested object",
+			name: "testobj-nested object",
 			obj:  "Spec",
 			help: "Spec contains the desired state",
 		},
@@ -260,7 +260,7 @@ func TestObj(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Obj(tt.obj, tt.help)
-			assertRender(t, got)
+			assertRender(t, tt.name, got)
 		})
 	}
 }
@@ -273,31 +273,31 @@ func TestPkg(t *testing.T) {
 		help string
 	}{
 		{
-			name: "default",
+			name: "testpkg-default",
 			pkg:  "mylib",
 			url:  "https://example.com/lib",
 			help: "My library docs",
 		},
 		{
-			name: "empty help",
+			name: "testpkg-empty help",
 			pkg:  "lib",
 			url:  "github.com/foo/lib",
 			help: "",
 		},
 		{
-			name: "k8s package",
+			name: "testpkg-k8s package",
 			pkg:  "k8s",
 			url:  "https://github.com/kubernetes/k8s-lib",
 			help: "Kubernetes library",
 		},
 		{
-			name: "versioned package",
+			name: "testpkg-versioned package",
 			pkg:  "mylib.v2",
 			url:  "https://example.com/v2",
 			help: "Version 2 of my library",
 		},
 		{
-			name: "github package",
+			name: "testpkg-github package",
 			pkg:  "utils",
 			url:  "github.com/example/utils",
 			help: "Common utilities",
@@ -307,7 +307,7 @@ func TestPkg(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Pkg(tt.pkg, tt.url, tt.help)
-			assertRender(t, got)
+			assertRender(t, tt.name, got)
 		})
 	}
 }

@@ -8,15 +8,15 @@ func TestIfThenElse(t *testing.T) {
 		c    ConditionType
 	}{
 		{
-			name: "simple",
+			name: "testifthenelse-simple",
 			c:    IfThenElse("c", Ref("", "x"), Ref("", "a"), Ref("", "b")),
 		},
 		{
-			name: "with literals",
+			name: "testifthenelse-with literals",
 			c:    IfThenElse("c", Bool("c", true), String("", "yes"), String("", "no")),
 		},
 		{
-			name: "nested",
+			name: "testifthenelse-nested",
 			c: IfThenElse("c",
 				Ref("", "a"),
 				IfThenElse("", Ref("", "b"), Ref("", "x"), Ref("", "y")),
@@ -24,11 +24,11 @@ func TestIfThenElse(t *testing.T) {
 			),
 		},
 		{
-			name: "with Int",
+			name: "testifthenelse-with Int",
 			c:    IfThenElse("c", Int("n", 0), Int("", 1), Int("", 2)),
 		},
 		{
-			name: "with default branches",
+			name: "testifthenelse-with default branches",
 			c:    IfThenElse("c", Ref("", "x"), String("", "default"), String("", "fallback")),
 		},
 	}
@@ -36,7 +36,7 @@ func TestIfThenElse(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			o := Object("", Ref("result", tt.c.String()))
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }

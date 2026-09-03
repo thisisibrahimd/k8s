@@ -3,26 +3,14 @@ package jsonschemacompiler_test
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
-	"github.com/thisisibrahimd/k8s/pkg/compiler/jsonschemacompiler"
-	"github.com/thisisibrahimd/k8s/pkg/format"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/sebdah/goldie/v2"
+	"github.com/thisisibrahimd/k8s/pkg/compiler/jsonschemacompiler"
+	"github.com/thisisibrahimd/k8s/pkg/format"
 )
-
-// verifyLibsonnetFileMatch verify that the generated libsonnet file matches the golden libsonnet file in our golden directory
-func verifyLibsonnetFileMatch(t *testing.T, v []byte) {
-	g := goldie.New(
-		t,
-		goldie.WithFixtureDir("./testdata"),
-		goldie.WithNameSuffix(".golden.libsonnet"),
-		goldie.WithTestNameForDir(false),
-		goldie.WithSubTestNameForDir(false),
-	)
-
-	g.Assert(t, t.Name(), v)
-}
 
 func TestCompileLibsonnet(t *testing.T) {
 	// create jsonschema compiler
@@ -74,9 +62,22 @@ func TestCompileLibsonnet(t *testing.T) {
 			formattedLibsonnet := formatDebug(t, tt.name, got.String())
 
 			// compare
-			verifyLibsonnetFileMatch(t, []byte(formattedLibsonnet))
+			verifyLibsonnetFileMatch(t, tt.name, []byte(formattedLibsonnet))
 		})
 	}
+}
+
+// verifyLibsonnetFileMatch verify that the generated libsonnet file matches the golden libsonnet file in our golden directory
+func verifyLibsonnetFileMatch(t *testing.T, name string, v []byte) {
+	g := goldie.New(
+		t,
+		goldie.WithFixtureDir("./testdata"),
+		goldie.WithNameSuffix(".golden.libsonnet"),
+		goldie.WithTestNameForDir(false),
+		goldie.WithSubTestNameForDir(false),
+	)
+
+	g.Assert(t, strings.ReplaceAll(name, " ", "_"), v)
 }
 
 // formatDebug formats content and, on failure, writes the raw output to a temp
