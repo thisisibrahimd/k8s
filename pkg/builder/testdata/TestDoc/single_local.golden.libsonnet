@@ -1,2 +1,0 @@
-local msg = "hello";
-msg

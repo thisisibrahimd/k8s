@@ -96,7 +96,7 @@ func TestLargeFunc(t *testing.T) {
 					LargeFunc(tt.funcName, tt.args, Object("", tt.children...)),
 				)
 			}
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }
@@ -145,7 +145,7 @@ func TestArgsString(t *testing.T) {
 			want:      "",
 		},
 		{
-			name: "break line single",
+			name: "testargsstring-break line single",
 			args: []Type{
 				String("s", "hello"),
 			},
@@ -153,7 +153,7 @@ func TestArgsString(t *testing.T) {
 			want:      "\n  s=\"hello\"",
 		},
 		{
-			name: "break line multiple",
+			name: "testargsstring-break line multiple",
 			args: []Type{
 				String("s", "hello"),
 				Int("n", 5),
@@ -163,7 +163,7 @@ func TestArgsString(t *testing.T) {
 			want:      "\n  s=\"hello\",\n  n=5,\n  b=true",
 		},
 		{
-			name: "break line with required",
+			name: "testargsstring-break line with required",
 			args: []Type{
 				Required(String("name", "")),
 				Int("count", 1),

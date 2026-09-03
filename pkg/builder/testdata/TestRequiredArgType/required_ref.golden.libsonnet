@@ -1,3 +1,0 @@
-{
-  fn(config): name
-}

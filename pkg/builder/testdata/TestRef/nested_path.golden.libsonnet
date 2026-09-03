@@ -1,3 +1,0 @@
-{
-  r: self.spec.containers
-}

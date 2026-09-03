@@ -1,3 +1,0 @@
-{
-  m: (importstr 'foo.txt')
-}

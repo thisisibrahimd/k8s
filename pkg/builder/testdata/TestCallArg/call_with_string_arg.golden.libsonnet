@@ -1,3 +1,0 @@
-{
-  result: format("hello")
-}

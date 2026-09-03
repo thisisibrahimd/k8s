@@ -1,5 +1,0 @@
-{
-  result: apply({
-    key: "value"
-  })
-}

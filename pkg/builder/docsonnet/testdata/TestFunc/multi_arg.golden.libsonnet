@@ -1,1 +1,0 @@
-d.fn(help="Deploy a service", args=[d.arg(name="name", type=d.T.String), d.arg(name="replicas", type=d.T.Int)])

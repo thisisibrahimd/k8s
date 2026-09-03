@@ -10,61 +10,61 @@ func TestArithType(t *testing.T) {
 		args []Type
 	}{
 		{
-			name: "add two",
+			name: "testarithtype-add two",
 			n:    "sum",
 			ctor: Add,
 			args: []Type{Int("a", 1), Int("b", 2)},
 		},
 		{
-			name: "add three",
+			name: "testarithtype-add three",
 			n:    "sum",
 			ctor: Add,
 			args: []Type{Int("a", 1), Int("b", 2), Int("c", 3)},
 		},
 		{
-			name: "sub two",
+			name: "testarithtype-sub two",
 			n:    "diff",
 			ctor: Sub,
 			args: []Type{Int("a", 10), Int("b", 3)},
 		},
 		{
-			name: "div two",
+			name: "testarithtype-div two",
 			n:    "ratio",
 			ctor: Div,
 			args: []Type{Int("a", 10), Int("b", 2)},
 		},
 		{
-			name: "mul two",
+			name: "testarithtype-mul two",
 			n:    "product",
 			ctor: Mul,
 			args: []Type{Int("a", 3), Int("b", 4)},
 		},
 		{
-			name: "mod two",
+			name: "testarithtype-mod two",
 			n:    "remainder",
 			ctor: Mod,
 			args: []Type{Int("a", 10), Int("b", 3)},
 		},
 		{
-			name: "add with strings",
+			name: "testarithtype-add with strings",
 			n:    "concat",
 			ctor: Add,
 			args: []Type{String("a", "hello"), String("b", " world")},
 		},
 		{
-			name: "mul with floats",
+			name: "testarithtype-mul with floats",
 			n:    "area",
 			ctor: Mul,
 			args: []Type{Float("width", 3.5), Float("height", 2.0)},
 		},
 		{
-			name: "sub with refs",
+			name: "testarithtype-sub with refs",
 			n:    "delta",
 			ctor: Sub,
 			args: []Type{Ref("old", "self.oldValue"), Ref("new", "self.newValue")},
 		},
 		{
-			name: "div single operand",
+			name: "testarithtype-div single operand",
 			n:    "identity",
 			ctor: Div,
 			args: []Type{Int("a", 42)},
@@ -74,7 +74,7 @@ func TestArithType(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			o := Object("", tt.ctor(tt.n, tt.args...))
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }

@@ -39,7 +39,7 @@ func TestCommentType_Comment(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ct := Comment(tt.child, tt.comment)
 			o := Object("", ct)
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }
@@ -50,19 +50,19 @@ func TestCommentType_Rendering(t *testing.T) {
 		children []Type
 	}{
 		{
-			name: "comment on string",
+			name: "testcommenttype_rendering-comment on string",
 			children: []Type{
 				Comment(String("name", "app"), "The application name"),
 			},
 		},
 		{
-			name: "comment on int",
+			name: "testcommenttype_rendering-comment on int",
 			children: []Type{
 				Comment(Int("replicas", 3), "Number of replicas"),
 			},
 		},
 		{
-			name: "comment on object",
+			name: "testcommenttype_rendering-comment on object",
 			children: []Type{
 				Comment(Object("spec",
 					String("image", "nginx"),
@@ -71,7 +71,7 @@ func TestCommentType_Rendering(t *testing.T) {
 			},
 		},
 		{
-			name: "comment on func",
+			name: "testcommenttype_rendering-comment on func",
 			children: []Type{
 				Comment(
 					Func("build",
@@ -83,13 +83,13 @@ func TestCommentType_Rendering(t *testing.T) {
 			},
 		},
 		{
-			name: "comment on bool",
+			name: "testcommenttype_rendering-comment on bool",
 			children: []Type{
 				Comment(Bool("enabled", true), "Whether the feature is enabled"),
 			},
 		},
 		{
-			name: "comment on ref",
+			name: "testcommenttype_rendering-comment on ref",
 			children: []Type{
 				Comment(Ref("config", "self.config"), "Reference to config"),
 			},
@@ -99,7 +99,7 @@ func TestCommentType_Rendering(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			o := Object("", tt.children...)
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }
@@ -134,7 +134,7 @@ func TestRequiredArgType(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			o := Object("", Func("fn", Args(tt.child), Ref("result", "name")))
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }
@@ -169,7 +169,7 @@ func TestCallArg(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			o := Object("", tt.child)
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }

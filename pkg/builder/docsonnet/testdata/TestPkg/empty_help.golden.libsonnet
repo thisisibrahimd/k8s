@@ -1,1 +1,0 @@
-d.pkg(name="lib", url="github.com/foo/lib", help="")

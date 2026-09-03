@@ -1,1 +1,0 @@
-d.fn(help="Enable a feature", args=[d.arg(name="feature", type=d.T.String), d.arg(name="enabled", type=d.T.Bool)])

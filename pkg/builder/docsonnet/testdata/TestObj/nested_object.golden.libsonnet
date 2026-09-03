@@ -1,1 +1,0 @@
-d.obj(help="Spec contains the desired state")

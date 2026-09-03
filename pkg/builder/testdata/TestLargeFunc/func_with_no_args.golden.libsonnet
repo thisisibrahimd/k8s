@@ -1,7 +1,0 @@
-{
-  empty(
-    
-  ): {
-    result: "done"
-  }
-}

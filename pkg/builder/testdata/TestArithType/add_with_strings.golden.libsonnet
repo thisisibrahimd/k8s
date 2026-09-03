@@ -1,3 +1,0 @@
-{
-  concat: "hello" + " world"
-}

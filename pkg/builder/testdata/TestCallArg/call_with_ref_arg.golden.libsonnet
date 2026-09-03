@@ -1,3 +1,0 @@
-{
-  result: use(self.value)
-}

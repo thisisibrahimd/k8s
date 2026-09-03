@@ -1,5 +1,0 @@
-{
-  hidden+:: {
-    incognito: "yes!"
-  }
-}

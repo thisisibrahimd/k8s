@@ -8,13 +8,13 @@ func TestObjectPrimitive(t *testing.T) {
 		children []Type
 	}{
 		{
-			name: "single int",
+			name: "testobjectprimitive-single int",
 			children: []Type{
 				Int("count", 42),
 			},
 		},
 		{
-			name: "mixed types",
+			name: "testobjectprimitive-mixed types",
 			children: []Type{
 				Int("int", 1),
 				String("string", "hello"),
@@ -24,7 +24,7 @@ func TestObjectPrimitive(t *testing.T) {
 			},
 		},
 		{
-			name: "only strings",
+			name: "testobjectprimitive-only strings",
 			children: []Type{
 				String("name", "app"),
 				String("version", "v1.0"),
@@ -32,7 +32,7 @@ func TestObjectPrimitive(t *testing.T) {
 			},
 		},
 		{
-			name: "only bools",
+			name: "testobjectprimitive-only bools",
 			children: []Type{
 				Bool("enabled", true),
 				Bool("disabled", false),
@@ -48,7 +48,7 @@ func TestObjectPrimitive(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			o := Object("", tt.children...)
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }
@@ -59,7 +59,7 @@ func TestObjectFuncs(t *testing.T) {
 		children []Type
 	}{
 		{
-			name: "regular func with mixed args",
+			name: "testobjectfuncs-regular func with mixed args",
 			children: []Type{
 				Func("regular",
 					Args(
@@ -78,7 +78,7 @@ func TestObjectFuncs(t *testing.T) {
 			},
 		},
 		{
-			name: "hidden func with single arg",
+			name: "testobjectfuncs-hidden func with single arg",
 			children: []Type{
 				Func("hidden",
 					Args(Int("h", 3)),
@@ -87,7 +87,7 @@ func TestObjectFuncs(t *testing.T) {
 			},
 		},
 		{
-			name: "func with no args",
+			name: "testobjectfuncs-func with no args",
 			children: []Type{
 				Func("empty",
 					nil,
@@ -96,7 +96,7 @@ func TestObjectFuncs(t *testing.T) {
 			},
 		},
 		{
-			name: "func returning object",
+			name: "testobjectfuncs-func returning object",
 			children: []Type{
 				Func("build",
 					Args(String("name", "app"), Int("replicas", 3)),
@@ -108,7 +108,7 @@ func TestObjectFuncs(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple funcs",
+			name: "testobjectfuncs-multiple funcs",
 			children: []Type{
 				Func("create",
 					Args(String("name", "")),
@@ -125,7 +125,7 @@ func TestObjectFuncs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			o := Object("", tt.children...)
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }
@@ -136,7 +136,7 @@ func TestObjectMerge(t *testing.T) {
 		children []Type
 	}{
 		{
-			name: "regular merge",
+			name: "testobjectmerge-regular merge",
 			children: []Type{
 				Merge(Object("regular",
 					Int("int", 2),
@@ -144,7 +144,7 @@ func TestObjectMerge(t *testing.T) {
 			},
 		},
 		{
-			name: "hidden merge",
+			name: "testobjectmerge-hidden merge",
 			children: []Type{
 				Hidden(Merge(Object("hidden",
 					String("incognito", "yes!"),
@@ -152,7 +152,7 @@ func TestObjectMerge(t *testing.T) {
 			},
 		},
 		{
-			name: "mixed merge and regular",
+			name: "testobjectmerge-mixed merge and regular",
 			children: []Type{
 				Merge(Object("regular",
 					Int("int", 2),
@@ -163,7 +163,7 @@ func TestObjectMerge(t *testing.T) {
 			},
 		},
 		{
-			name: "multiple merges",
+			name: "testobjectmerge-multiple merges",
 			children: []Type{
 				Merge(Object("a", Int("x", 1))),
 				Merge(Object("b", String("y", "hello"))),
@@ -171,7 +171,7 @@ func TestObjectMerge(t *testing.T) {
 			},
 		},
 		{
-			name: "merge with nested object",
+			name: "testobjectmerge-merge with nested object",
 			children: []Type{
 				Merge(Object("nested",
 					Object("inner",
@@ -185,7 +185,7 @@ func TestObjectMerge(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			o := Object("", tt.children...)
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }
@@ -196,14 +196,14 @@ func TestObjectLocal(t *testing.T) {
 		children []Type
 	}{
 		{
-			name: "single local",
+			name: "testobjectlocal-single local",
 			children: []Type{
 				Local(String("msg", "hello")),
 				Ref("greet", "msg"),
 			},
 		},
 		{
-			name: "multiple locals",
+			name: "testobjectlocal-multiple locals",
 			children: []Type{
 				Local(String("msg", "hello")),
 				Ref("greet", "msg"),
@@ -211,21 +211,21 @@ func TestObjectLocal(t *testing.T) {
 			},
 		},
 		{
-			name: "local with int",
+			name: "testobjectlocal-local with int",
 			children: []Type{
 				Local(Int("count", 5)),
 				Ref("n", "count"),
 			},
 		},
 		{
-			name: "local with bool",
+			name: "testobjectlocal-local with bool",
 			children: []Type{
 				Local(Bool("flag", true)),
 				Ref("enabled", "flag"),
 			},
 		},
 		{
-			name: "local with object",
+			name: "testobjectlocal-local with object",
 			children: []Type{
 				Local(Object("config", String("key", "value"))),
 				Ref("cfg", "config"),
@@ -236,7 +236,7 @@ func TestObjectLocal(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			o := Object("", tt.children...)
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }
@@ -247,27 +247,27 @@ func TestObjectConcise(t *testing.T) {
 		children []Type
 	}{
 		{
-			name: "single string",
+			name: "testobjectconcise-single string",
 			children: []Type{
 				String("s", "string"),
 			},
 		},
 		{
-			name: "string and bool",
+			name: "testobjectconcise-string and bool",
 			children: []Type{
 				String("s", "string"),
 				Bool("b", false),
 			},
 		},
 		{
-			name: "int and float",
+			name: "testobjectconcise-int and float",
 			children: []Type{
 				Int("n", 42),
 				Float("f", 3.14),
 			},
 		},
 		{
-			name: "all primitives",
+			name: "testobjectconcise-all primitives",
 			children: []Type{
 				String("s", "val"),
 				Int("n", 1),
@@ -285,7 +285,7 @@ func TestObjectConcise(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			o := ConciseObject(tt.name, tt.children...)
-			assertRender(t, o)
+			assertRender(t, tt.name, o)
 		})
 	}
 }

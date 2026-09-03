@@ -1,7 +1,0 @@
-{
-  nested+: {
-    inner: {
-      key: "value"
-    }
-  }
-}

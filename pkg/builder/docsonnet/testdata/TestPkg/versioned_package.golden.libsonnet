@@ -1,1 +1,0 @@
-d.pkg(name="mylib.v2", url="https://example.com/v2", help="Version 2 of my library")
