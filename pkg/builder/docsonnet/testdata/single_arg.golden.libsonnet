@@ -1,0 +1,1 @@
+d.fn(help="Create a new widget", args=[d.arg(name="kind", type=d.T.String)])

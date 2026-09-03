@@ -1,0 +1,3 @@
+{
+  call: "init()\n.build()"
+}

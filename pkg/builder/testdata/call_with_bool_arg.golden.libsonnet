@@ -1,0 +1,3 @@
+{
+  result: check(true)
+}

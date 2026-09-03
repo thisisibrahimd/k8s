@@ -1,0 +1,3 @@
+{
+  m: (import 'foo.libsonnet')
+}
